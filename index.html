@@ -478,6 +478,189 @@
       .activities-grid { grid-template-columns: repeat(2,1fr); }
       .pillars-grid { grid-template-columns: 1fr; }
     }
+
+    /* ========================================================
+       PEQUES AI CHAT WIDGET
+    ======================================================== */
+    #pq-chat-toggle {
+      position: fixed; bottom: 28px; right: 28px; z-index: 900;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--sage-dark); color: #fff;
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 28px rgba(159,184,122,0.55);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      font-size: 1.45rem;
+    }
+    #pq-chat-toggle:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 36px rgba(159,184,122,0.65);
+    }
+    #pq-chat-toggle.open { background: var(--ink-mid); }
+    .pq-chat-pulse {
+      position: absolute; top: 2px; right: 2px;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--peach-dk);
+      border: 2px solid var(--warm-white);
+      animation: pqPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pqPulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.25); opacity: 0.7; }
+    }
+
+    #pq-chat-window {
+      position: fixed; bottom: 100px; right: 28px; z-index: 900;
+      width: 360px; max-height: 560px;
+      background: var(--warm-white);
+      border-radius: 20px;
+      box-shadow: 0 24px 72px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.07);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transform: translateY(18px) scale(0.96);
+      opacity: 0; pointer-events: none;
+      transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), opacity 0.22s ease;
+    }
+    #pq-chat-window.open {
+      transform: translateY(0) scale(1);
+      opacity: 1; pointer-events: all;
+    }
+
+    .pq-chat-header {
+      background: var(--ink);
+      padding: 18px 20px 16px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .pq-chat-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--sage-dark), var(--peach-dk), var(--taupe));
+    }
+    .pq-chat-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; flex-shrink: 0;
+    }
+    .pq-chat-header-info { flex: 1; }
+    .pq-chat-header-name {
+      font-size: 0.83rem; font-weight: 700; color: #fff; line-height: 1.2;
+    }
+    .pq-chat-header-status {
+      font-size: 0.67rem; color: rgba(255,255,255,0.5); margin-top: 2px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .pq-status-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--sage-mid);
+    }
+    .pq-chat-close {
+      background: none; border: none; color: rgba(255,255,255,0.45);
+      cursor: pointer; font-size: 1.1rem; padding: 4px;
+      transition: color 0.18s ease;
+    }
+    .pq-chat-close:hover { color: #fff; }
+
+    .pq-chat-messages {
+      flex: 1; overflow-y: auto; padding: 18px 16px;
+      display: flex; flex-direction: column; gap: 14px;
+      scroll-behavior: smooth;
+    }
+    .pq-chat-messages::-webkit-scrollbar { width: 4px; }
+    .pq-chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .pq-chat-messages::-webkit-scrollbar-thumb { background: var(--taupe); border-radius: 4px; }
+
+    .pq-msg {
+      display: flex; gap: 9px; align-items: flex-end;
+      animation: pqFadeIn 0.28s ease;
+    }
+    @keyframes pqFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .pq-msg.user { flex-direction: row-reverse; }
+    .pq-msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+    }
+    .pq-msg.bot .pq-msg-avatar  { background: var(--sage);  color: var(--ink); }
+    .pq-msg.user .pq-msg-avatar { background: var(--taupe); color: var(--ink); }
+    .pq-msg-bubble {
+      max-width: 82%; padding: 10px 14px;
+      font-size: 0.83rem; line-height: 1.6; border-radius: 16px;
+    }
+    .pq-msg.bot  .pq-msg-bubble {
+      background: #fff; color: var(--ink);
+      border-radius: 4px 16px 16px 16px;
+      box-shadow: var(--sh-sm);
+    }
+    .pq-msg.user .pq-msg-bubble {
+      background: var(--sage-dark); color: #fff;
+      border-radius: 16px 4px 16px 16px;
+    }
+    .pq-typing {
+      display: flex; gap: 5px; padding: 12px 16px; align-items: center;
+    }
+    .pq-typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--taupe-dark);
+      animation: pqTyping 1.2s ease-in-out infinite;
+    }
+    .pq-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .pq-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pqTyping {
+      0%,60%,100% { transform: translateY(0);  opacity: 0.4; }
+      30%          { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .pq-quick-replies {
+      padding: 0 16px 10px; display: flex; flex-wrap: wrap; gap: 7px;
+    }
+    .pq-qr {
+      background: #fff; border: 1.5px solid var(--taupe);
+      border-radius: 50px; padding: 6px 13px;
+      font-size: 0.72rem; font-weight: 600; color: var(--ink-mid);
+      cursor: pointer; transition: all 0.18s ease;
+      font-family: 'Raleway', sans-serif;
+    }
+    .pq-qr:hover { background: var(--sage); border-color: var(--sage-mid); color: var(--ink); }
+
+    .pq-chat-footer {
+      border-top: 1px solid var(--cream-3);
+      padding: 12px 14px; display: flex; gap: 10px; align-items: center;
+      flex-shrink: 0;
+    }
+    #pq-chat-input {
+      flex: 1; border: 1.5px solid var(--taupe);
+      border-radius: 50px; padding: 9px 16px;
+      font-family: 'Raleway', sans-serif; font-size: 0.82rem;
+      color: var(--ink); background: #fff; outline: none;
+      transition: border-color 0.18s ease;
+    }
+    #pq-chat-input:focus { border-color: var(--sage-dark); }
+    #pq-chat-input::placeholder { color: var(--ink-lt); }
+    #pq-chat-send {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--sage-dark); border: none; cursor: pointer;
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background 0.18s ease, transform 0.18s ease;
+      flex-shrink: 0;
+    }
+    #pq-chat-send:hover { background: #88a660; transform: scale(1.07); }
+    #pq-chat-send:disabled { background: var(--taupe); cursor: not-allowed; transform: none; }
+
+    .pq-chat-branding {
+      text-align: center; padding: 6px 0 10px;
+      font-size: 0.6rem; color: var(--ink-lt); letter-spacing: 0.06em;
+      flex-shrink: 0;
+    }
+
+    @media(max-width: 420px) {
+      #pq-chat-window { width: calc(100vw - 24px); right: 12px; bottom: 90px; }
+      #pq-chat-toggle { right: 16px; bottom: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -936,6 +1119,213 @@
     toggle.classList.remove('open');
     document.body.style.overflow = '';
   }
+</script>
+
+<!-- ═══ PEQUES AI CHAT WIDGET ═══ -->
+
+<!-- Toggle button -->
+<button id="pq-chat-toggle" aria-label="Chat with us">
+  <span id="pq-chat-icon">&#127807;</span>
+  <span class="pq-chat-pulse" id="pq-pulse"></span>
+</button>
+
+<!-- Chat window -->
+<div id="pq-chat-window" role="dialog" aria-label="Peques Assistant">
+
+  <!-- Header -->
+  <div class="pq-chat-header">
+    <div class="pq-chat-avatar">&#127807;</div>
+    <div class="pq-chat-header-info">
+      <div class="pq-chat-header-name">Peques Assistant</div>
+      <div class="pq-chat-header-status">
+        <span class="pq-status-dot"></span>
+        Online &middot; Nursery enquiries
+      </div>
+    </div>
+    <button class="pq-chat-close" id="pq-chat-close" aria-label="Close chat">&#10005;</button>
+  </div>
+
+  <!-- Messages -->
+  <div class="pq-chat-messages" id="pq-messages"></div>
+
+  <!-- Quick replies (shown at start) -->
+  <div class="pq-quick-replies" id="pq-quick-replies">
+    <button class="pq-qr" data-msg="What languages do you teach?">&#127760; Languages</button>
+    <button class="pq-qr" data-msg="How do I book a visit?">&#128197; Book a visit</button>
+    <button class="pq-qr" data-msg="Where are you located?">&#128205; Locations</button>
+    <button class="pq-qr" data-msg="What age groups do you accept?">&#128118; Ages</button>
+    <button class="pq-qr" data-msg="Do you offer funded places?">&#128176; Funding</button>
+    <button class="pq-qr" data-msg="What activities do you offer?">&#127931; Activities</button>
+  </div>
+
+  <!-- Input -->
+  <div class="pq-chat-footer">
+    <input
+      type="text"
+      id="pq-chat-input"
+      placeholder="Ask us anything…"
+      autocomplete="off"
+      maxlength="400"
+    />
+    <button id="pq-chat-send" aria-label="Send message" disabled>&#10148;</button>
+  </div>
+  <div class="pq-chat-branding">Powered by AI &middot; Peques &copy; 2025</div>
+</div>
+
+<script>
+(function() {
+  /* ── State ── */
+  const ENDPOINT  = '/api/chat';
+  const GREETING  = 'Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I\'m here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?';
+  let history     = [];
+  let isOpen      = false;
+  let isTyping    = false;
+
+  /* ── DOM refs ── */
+  const toggle    = document.getElementById('pq-chat-toggle');
+  const icon      = document.getElementById('pq-chat-icon');
+  const pulse     = document.getElementById('pq-pulse');
+  const chatWin   = document.getElementById('pq-chat-window');
+  const closeBtn  = document.getElementById('pq-chat-close');
+  const messages  = document.getElementById('pq-messages');
+  const input     = document.getElementById('pq-chat-input');
+  const sendBtn   = document.getElementById('pq-chat-send');
+  const quickReps = document.getElementById('pq-quick-replies');
+
+  /* ── Open / close ── */
+  function openChat() {
+    isOpen = true;
+    chatWin.classList.add('open');
+    toggle.classList.add('open');
+    icon.textContent = '✕';
+    pulse.style.display = 'none';
+    if (messages.children.length === 0) addBotMessage(GREETING);
+    setTimeout(() => input.focus(), 300);
+  }
+  function closeChat() {
+    isOpen = false;
+    chatWin.classList.remove('open');
+    toggle.classList.remove('open');
+    icon.textContent = '🌿';
+  }
+  toggle.addEventListener('click', () => isOpen ? closeChat() : openChat());
+  closeBtn.addEventListener('click', closeChat);
+
+  /* ── Render helpers ── */
+  function addBotMessage(text) {
+    const msg = buildBubble('bot', text);
+    messages.appendChild(msg);
+    scrollBottom();
+  }
+  function addUserMessage(text) {
+    const msg = buildBubble('user', text);
+    messages.appendChild(msg);
+    scrollBottom();
+  }
+  function buildBubble(role, text) {
+    const wrap = document.createElement('div');
+    wrap.className = `pq-msg ${role}`;
+    const avatar = document.createElement('div');
+    avatar.className = 'pq-msg-avatar';
+    avatar.textContent = role === 'bot' ? '🌿' : '👤';
+    const bubble = document.createElement('div');
+    bubble.className = 'pq-msg-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(avatar);
+    wrap.appendChild(bubble);
+    return wrap;
+  }
+  function showTyping() {
+    removeTyping();
+    const wrap = document.createElement('div');
+    wrap.className = 'pq-msg bot';
+    wrap.id = 'pq-typing-indicator';
+    const avatar = document.createElement('div');
+    avatar.className = 'pq-msg-avatar';
+    avatar.textContent = '🌿';
+    const dots = document.createElement('div');
+    dots.className = 'pq-msg-bubble pq-typing';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    wrap.appendChild(avatar);
+    wrap.appendChild(dots);
+    messages.appendChild(wrap);
+    scrollBottom();
+  }
+  function removeTyping() {
+    const el = document.getElementById('pq-typing-indicator');
+    if (el) el.remove();
+  }
+  function scrollBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  /* ── Send message ── */
+  async function sendMessage(text) {
+    if (!text.trim() || isTyping) return;
+
+    // Hide quick replies after first message
+    quickReps.style.display = 'none';
+
+    const userText = text.trim();
+    input.value = '';
+    sendBtn.disabled = true;
+    isTyping = true;
+
+    addUserMessage(userText);
+    history.push({ role: 'user', content: userText });
+
+    showTyping();
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      });
+
+      const data = await res.json();
+      removeTyping();
+
+      const reply = data.reply || 'I\'m sorry, I couldn\'t process that. Please contact us at info@peques.co.uk.';
+      addBotMessage(reply);
+      history.push({ role: 'assistant', content: reply });
+
+    } catch (err) {
+      removeTyping();
+      addBotMessage('I\'m sorry, there was a connection issue. Please email us at info@peques.co.uk or call 0207 385 0055.');
+    }
+
+    isTyping = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  /* ── Input events ── */
+  input.addEventListener('input', () => {
+    sendBtn.disabled = input.value.trim().length === 0;
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(input.value);
+    }
+  });
+  sendBtn.addEventListener('click', () => sendMessage(input.value));
+
+  /* ── Quick reply buttons ── */
+  quickReps.querySelectorAll('.pq-qr').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sendMessage(btn.dataset.msg);
+    });
+  });
+
+  /* ── Close on backdrop click (outside window) ── */
+  document.addEventListener('click', (e) => {
+    if (isOpen && !chatWin.contains(e.target) && !toggle.contains(e.target)) {
+      closeChat();
+    }
+  });
+})();
 </script>
 </body>
 </html>
