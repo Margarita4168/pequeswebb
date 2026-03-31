@@ -732,43 +732,59 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-(function() {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-  /* Conditional qualification panels */
-  const qualYes   = document.getElementById('qual-yes');
-  const qualNo    = document.getElementById('qual-no');
-  const yesPanel  = document.getElementById('qual-yes-panel');
-  const noPanel   = document.getElementById('qual-no-panel');
+  /* ── FORMSPREE ENDPOINT ─────────────────────────────────────────
+     1. Go to https://formspree.io and create a free account
+     2. Create a new form → set notification email to careers@peques.co.uk
+     3. Copy your Form ID (the part after /f/ in the endpoint URL)
+     4. Replace YOUR_FORM_ID below with that ID
+        e.g. if your endpoint is https://formspree.io/f/xabcdefg
+             write: const FORMSPREE_ID = 'xabcdefg';
+  ────────────────────────────────────────────────────────────────── */
+  var FORMSPREE_ID = 'YOUR_FORM_ID';
+  var ENDPOINT     = 'https://formspree.io/f/' + FORMSPREE_ID;
 
-  function toggleQualPanels() {
-    if (qualYes && qualYes.checked) {
+  /* ── QUALIFICATION PANELS ── */
+  var radios   = document.querySelectorAll('input[name="has_qualification"]');
+  var yesPanel = document.getElementById('qual-yes-panel');
+  var noPanel  = document.getElementById('qual-no-panel');
+
+  function updateQualPanel() {
+    var checked = document.querySelector('input[name="has_qualification"]:checked');
+    if (!checked) return;
+    if (checked.value === 'Yes') {
       yesPanel.style.display = 'block';
       noPanel.style.display  = 'none';
-    } else if (qualNo && qualNo.checked) {
+    } else {
       yesPanel.style.display = 'none';
       noPanel.style.display  = 'block';
     }
   }
-  if (qualYes) qualYes.addEventListener('change', toggleQualPanels);
-  if (qualNo)  qualNo.addEventListener('change', toggleQualPanels);
+  radios.forEach(function(r) { r.addEventListener('change', updateQualPanel); });
 
-  /* Form validation & submit */
-  const form    = document.getElementById('application-form');
-  const success = document.getElementById('form-success');
+  /* ── FORM SUBMIT ── */
+  var form       = document.getElementById('application-form');
+  var successBox = document.getElementById('form-success');
+  var submitBtn  = document.getElementById('submit-btn');
 
   function markField(id, valid) {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el) el.classList.toggle('invalid', !valid);
     return valid;
   }
 
+  function radioChecked(name) {
+    return !!document.querySelector('input[name="' + name + '"]:checked');
+  }
+
   form.addEventListener('submit', function(e) {
     e.preventDefault();
-    let ok = true;
+    var ok = true;
 
-    /* Text / select fields */
-    const fields = [
+    /* Text / select validation */
+    var fieldPairs = [
       ['ff-firstname', form.first_name],
       ['ff-lastname',  form.last_name],
       ['ff-email',     form.email],
@@ -776,83 +792,79 @@
       ['ff-role',      form.role],
       ['ff-setting',   form.setting],
     ];
-    fields.forEach(([id, el]) => {
-      const valid = el && el.value.trim() !== '' && el.checkValidity();
+    fieldPairs.forEach(function(pair) {
+      var id = pair[0], el = pair[1];
+      var valid = el && el.value.trim() !== '' && el.checkValidity();
       if (!markField(id, valid)) ok = false;
     });
 
-    /* Right to work radio */
-    const rtwChecked = form.right_to_work && [...form.right_to_work].some(r => r.checked);
-    const rtwErr = document.getElementById('ff-rtw-error');
-    if (!rtwChecked) {
-      document.getElementById('ff-rtw').classList.add('invalid');
-      if (rtwErr) rtwErr.style.display = 'block';
-      ok = false;
-    } else {
-      document.getElementById('ff-rtw').classList.remove('invalid');
-      if (rtwErr) rtwErr.style.display = 'none';
-    }
+    /* Right to work */
+    var rtwOk  = radioChecked('right_to_work');
+    var rtwErr = document.getElementById('ff-rtw-error');
+    document.getElementById('ff-rtw').classList.toggle('invalid', !rtwOk);
+    if (rtwErr) rtwErr.style.display = rtwOk ? 'none' : 'block';
+    if (!rtwOk) ok = false;
 
-    /* Has qualification radio */
-    const hasQualChecked = form.has_qualification && [...form.has_qualification].some(r => r.checked);
-    const hasQualErr = document.getElementById('ff-hasqual-error');
-    if (!hasQualChecked) {
-      document.getElementById('ff-hasqual').classList.add('invalid');
-      if (hasQualErr) hasQualErr.style.display = 'block';
-      ok = false;
-    } else {
-      document.getElementById('ff-hasqual').classList.remove('invalid');
-      if (hasQualErr) hasQualErr.style.display = 'none';
-    }
+    /* Has qualification */
+    var qualOk  = radioChecked('has_qualification');
+    var qualErr = document.getElementById('ff-hasqual-error');
+    document.getElementById('ff-hasqual').classList.toggle('invalid', !qualOk);
+    if (qualErr) qualErr.style.display = qualOk ? 'none' : 'block';
+    if (!qualOk) ok = false;
 
     if (!ok) {
-      const firstErr = form.querySelector('.invalid');
+      var firstErr = form.querySelector('.invalid');
       if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
-    /* Build mailto body */
-    const fd   = new FormData(form);
-    const lines = [];
-    const labels = {
-      first_name:          'First name',
-      last_name:           'Last name',
-      email:               'Email',
-      phone:               'Phone',
-      role:                'Role of interest',
-      setting:             'Setting preference',
-      right_to_work:       'Right to work in UK',
-      has_qualification:   'Holds a qualification',
-      qualification_level: 'Qualification level',
-      training_interest:   'Training support interest',
-      message:             'Additional message',
-    };
-    for (const [key, label] of Object.entries(labels)) {
-      const val = fd.get(key);
-      if (val && val.trim()) lines.push(label + ': ' + val.trim());
-    }
+    /* ── Send to Formspree ── */
+    submitBtn.disabled   = true;
+    submitBtn.textContent = 'Sending\u2026';
 
-    const name    = (fd.get('first_name') || '') + ' ' + (fd.get('last_name') || '');
-    const role    = fd.get('role') || 'Enquiry';
-    const subject = encodeURIComponent('Expression of Interest: ' + role + ' — ' + name.trim());
-    const body    = encodeURIComponent(
-      'EXPRESSION OF INTEREST — PEQUES ANGLO-SPANISH NURSERY SCHOOLS\n' +
-      '=============================================================\n\n' +
-      lines.join('\n') +
-      '\n\n--- Submitted via peques.co.uk/careers ---'
+    var fd = new FormData(form);
+    fd.append('_subject',
+      'Expression of Interest: ' +
+      (fd.get('role') || 'Enquiry') + ' \u2014 ' +
+      (fd.get('first_name') || '') + ' ' + (fd.get('last_name') || '')
     );
 
-    window.location.href = 'mailto:careers@peques.co.uk?subject=' + subject + '&body=' + body;
-
-    setTimeout(() => {
-      form.style.display = 'none';
-      success.classList.add('show');
-      success.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 700);
+    fetch(ENDPOINT, {
+      method:  'POST',
+      body:    fd,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(res) {
+      if (res.ok) {
+        form.style.display = 'none';
+        successBox.classList.add('show');
+        successBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        return res.json().then(function(data) {
+          throw new Error(data.error || 'Submission failed');
+        });
+      }
+    })
+    .catch(function() {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = 'Send my details \u2192';
+      alert('There was a problem sending your form. Please contact us directly at careers@peques.co.uk or call 0207 385 0055.');
+    });
   });
 
-  /* Live blur validation for text inputs */
-  form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], select').forEach(el => {
-    el.addEventListener('blur', () => {
-      const wrap = el.closest('.form-field');
-      if (wrap) wrap.classList.toggle('invalid', !el.value.trim() || !el.c
+  /* ── Live validation on blur ── */
+  form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], select').forEach(function(el) {
+    el.addEventListener('blur', function() {
+      var wrap = el.closest('.form-field');
+      if (wrap) wrap.classList.toggle('invalid', !el.value.trim() || !el.checkValidity());
+    });
+    el.addEventListener('input', function() {
+      var wrap = el.closest('.form-field');
+      if (wrap && el.value.trim()) wrap.classList.remove('invalid');
+    });
+  });
+
+});
+</script>
+</body>
+</html>
