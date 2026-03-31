@@ -6,7 +6,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",
+      "src": "*.html",
       "use": "@vercel/static"
     }
   ],
@@ -16,7 +16,15 @@
       "dest": "/api/chat.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/careers",
+      "dest": "/careers.html"
+    },
+    {
+      "src": "/careers.html",
+      "dest": "/careers.html"
+    },
+    {
+      "src": "/",
       "dest": "/index.html"
     }
   ],
