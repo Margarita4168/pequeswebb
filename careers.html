@@ -710,7 +710,7 @@
           <p>
             Thank you for reaching out. A member of our team will be in touch with you personally within <strong>3 working days</strong>.<br/><br/>
             In the meantime, if you have any questions please do not hesitate to contact us at
-            <strong>info@peques.co.uk</strong> or call us on <strong>0207 385 0055</strong>.
+            <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="acc5c2cac3ecdcc9ddd9c9df82cfc382d9c7">[email&#160;protected]</a></strong> or call us on <strong>0207 385 0055</strong>.
             We look forward to speaking with you.
           </p>
         </div>
@@ -732,7 +732,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function() {
 
   /* Conditional qualification panels */
@@ -842,7 +842,7 @@
       '\n\n--- Submitted via peques.co.uk/careers ---'
     );
 
-    window.location.href = 'mailto:info@peques.co.uk?subject=' + subject + '&body=' + body;
+    window.location.href = 'mailto:careers@peques.co.uk?subject=' + subject + '&body=' + body;
 
     setTimeout(() => {
       form.style.display = 'none';
@@ -855,15 +855,4 @@
   form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], select').forEach(el => {
     el.addEventListener('blur', () => {
       const wrap = el.closest('.form-field');
-      if (wrap) wrap.classList.toggle('invalid', !el.value.trim() || !el.checkValidity());
-    });
-    el.addEventListener('input', () => {
-      const wrap = el.closest('.form-field');
-      if (wrap && el.value.trim()) wrap.classList.remove('invalid');
-    });
-  });
-
-})();
-</script>
-</body>
-</html>
+      if (wrap) wrap.classList.toggle('invalid', !el.value.trim() || !el.c
