@@ -1,34 +1,34 @@
 {
   "version": 2,
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    }
+  },
   "builds": [
-    { "src": "api/chat.js", "use": "@vercel/node" },
-    { "src": "*.html",     "use": "@vercel/static" },
-    { "src": "*.json",     "use": "@vercel/static" },
-    { "src": "*.js",       "use": "@vercel/static" }
+    { "src": "api/chat.js",        "use": "@vercel/node" },
+    { "src": "*.html",             "use": "@vercel/static" },
+    { "src": "*.json",             "use": "@vercel/static" },
+    { "src": "content-loader.js",  "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/chat",        "dest": "/api/chat.js" },
-    { "src": "/careers",         "dest": "/careers.html" },
-    { "src": "/careers.html",    "dest": "/careers.html" },
-    { "src": "/admin",           "dest": "/admin.html" },
-    { "src": "/admin.html",      "dest": "/admin.html" },
-    { "src": "/content.json",    "dest": "/content.json" },
-    { "src": "/content-loader.js","dest": "/content-loader.js" },
-    { "src": "/",                "dest": "/index.html" }
+    { "src": "/api/chat",            "dest": "/api/chat.js" },
+    { "src": "/careers",             "dest": "/careers.html" },
+    { "src": "/careers.html",        "dest": "/careers.html" },
+    { "src": "/admin",               "dest": "/admin.html" },
+    { "src": "/admin.html",          "dest": "/admin.html" },
+    { "src": "/content.json",        "dest": "/content.json" },
+    { "src": "/content-loader.js",   "dest": "/content-loader.js" },
+    { "src": "/",                    "dest": "/index.html" }
   ],
   "headers": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
+      "source": "/content.json",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store" }]
     },
     {
-      "source": "/content.json",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
-      ]
+      "source": "/(.*)",
+      "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }]
     }
   ]
 }

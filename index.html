@@ -1175,11 +1175,12 @@
 <script>
 (function() {
   /* ── State ── */
-  const ENDPOINT  = '/api/chat';
-  const GREETING  = 'Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I\'m here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?';
-  let history     = [];
-  let isOpen      = false;
-  let isTyping    = false;
+  const ENDPOINT = '/api/chat';
+  const GREETING = 'Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I\'m here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?';
+  let history   = [];    // kept for Chat Completions fallback
+  let threadId  = null;  // OpenAI Assistants thread — created on first message
+  let isOpen    = false;
+  let isTyping  = false;
 
   /* ── DOM refs ── */
   const toggle    = document.getElementById('pq-chat-toggle');
@@ -1207,23 +1208,24 @@
     chatWin.classList.remove('open');
     toggle.classList.remove('open');
     icon.textContent = '🌿';
+    // Reset thread on close so next session starts fresh
+    threadId = null;
+    history  = [];
   }
   toggle.addEventListener('click', () => isOpen ? closeChat() : openChat());
   closeBtn.addEventListener('click', closeChat);
 
   /* ── Render helpers ── */
   function addBotMessage(text) {
-    const msg = buildBubble('bot', text);
-    messages.appendChild(msg);
+    messages.appendChild(buildBubble('bot', text));
     scrollBottom();
   }
   function addUserMessage(text) {
-    const msg = buildBubble('user', text);
-    messages.appendChild(msg);
+    messages.appendChild(buildBubble('user', text));
     scrollBottom();
   }
   function buildBubble(role, text) {
-    const wrap = document.createElement('div');
+    const wrap   = document.createElement('div');
     wrap.className = `pq-msg ${role}`;
     const avatar = document.createElement('div');
     avatar.className = 'pq-msg-avatar';
@@ -1263,7 +1265,6 @@
   async function sendMessage(text) {
     if (!text.trim() || isTyping) return;
 
-    // Hide quick replies after first message
     quickReps.style.display = 'none';
 
     const userText = text.trim();
@@ -1280,11 +1281,18 @@
       const res = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({
+          message: userText,      // for Assistants API
+          messages: history,      // for Chat Completions fallback
+          thread_id: threadId     // null on first message, reused after
+        }),
       });
 
       const data = await res.json();
       removeTyping();
+
+      // Store thread_id returned by Assistants API (null in Completions mode)
+      if (data.thread_id) threadId = data.thread_id;
 
       const reply = data.reply || 'I\'m sorry, I couldn\'t process that. Please contact us at info@peques.co.uk.';
       addBotMessage(reply);
@@ -1305,25 +1313,18 @@
     sendBtn.disabled = input.value.trim().length === 0;
   });
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage(input.value);
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input.value); }
   });
   sendBtn.addEventListener('click', () => sendMessage(input.value));
 
   /* ── Quick reply buttons ── */
   quickReps.querySelectorAll('.pq-qr').forEach(btn => {
-    btn.addEventListener('click', () => {
-      sendMessage(btn.dataset.msg);
-    });
+    btn.addEventListener('click', () => sendMessage(btn.dataset.msg));
   });
 
-  /* ── Close on backdrop click (outside window) ── */
+  /* ── Close on backdrop click ── */
   document.addEventListener('click', (e) => {
-    if (isOpen && !chatWin.contains(e.target) && !toggle.contains(e.target)) {
-      closeChat();
-    }
+    if (isOpen && !chatWin.contains(e.target) && !toggle.contains(e.target)) closeChat();
   });
 })();
 </script>

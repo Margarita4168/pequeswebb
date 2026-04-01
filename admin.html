@@ -320,8 +320,8 @@
       <div class="panel" id="panel-api">
         <div class="panel-hd"><h2>API &amp; <em>Connection</em></h2><p>Configure the AI chat assistant and your GitHub publish connection.</p></div>
         <div class="card">
-          <div class="card-hd">🤖 OpenAI — Chat Assistant</div>
-          <div class="info"><p>Your API key powers the chat widget. It is written securely into <code>api/chat.js</code> on publish — never exposed to visitors.</p></div>
+          <div class="card-hd">🤖 OpenAI — API Key</div>
+          <div class="info"><p>Your API key is written securely into <code>api/chat.js</code> on publish — never visible to visitors.</p></div>
           <div class="api-row">
             <div class="f">
               <label>OpenAI API Key</label>
@@ -329,25 +329,44 @@
                 <input type="password" id="openai-key" placeholder="sk-proj-…" autocomplete="off" />
                 <button class="eye" type="button" onclick="togglePw('openai-key',this)">👁</button>
               </div>
+              <small>Get yours at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></small>
             </div>
-            <button class="test-btn" onclick="testOpenAI()">Test connection</button>
+            <button class="test-btn" onclick="testOpenAI()">Test key</button>
           </div>
           <div id="api-status-box"></div>
-          <div class="info warn" style="margin-top:12px;">
-            <p><strong>How to get an API key:</strong></p>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">🧠 OpenAI Assistant ID <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;color:var(--taupe-dk);">— recommended</span></div>
+          <div class="info">
+            <p>Connect your own <strong>custom Assistant</strong> built in the OpenAI platform. The assistant keeps its own knowledge, files, and instructions — no system prompt needed here.</p>
+            <p>When an Assistant ID is set, every visitor message is sent to your Assistant via a dedicated <strong>thread</strong>. Conversation history is preserved within each session automatically.</p>
+          </div>
+          <div class="api-row">
+            <div class="f">
+              <label>Assistant ID</label>
+              <input type="text" id="openai-assistant-id" placeholder="asst_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" style="font-family:monospace;font-size:0.8rem;" />
+              <small>Find it at <a href="https://platform.openai.com/assistants" target="_blank">platform.openai.com/assistants</a> — click your assistant, copy the ID</small>
+            </div>
+            <button class="test-btn" onclick="testAssistant()">Test assistant</button>
+          </div>
+          <div id="asst-status-box"></div>
+          <div class="info tip" style="margin-top:14px;">
+            <p><strong>How it works:</strong></p>
             <ol>
-              <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></li>
-              <li>Click <strong>Create new secret key</strong></li>
-              <li>Copy and paste it above, then click <strong>↑ Publish to site</strong></li>
+              <li>If an Assistant ID is set → chat uses your <strong>OpenAI Assistant</strong> (Assistants API)</li>
+              <li>If no Assistant ID → chat uses <strong>Chat Completions</strong> with the system prompt in Chat Config</li>
             </ol>
+            <p>Both require a valid API key. The Assistant ID takes priority when both are set.</p>
           </div>
           <div class="f" style="margin-top:14px;">
-            <label>OpenAI Model</label>
+            <label>Model (Chat Completions fallback only)</label>
             <select id="chat.openai_model">
               <option value="gpt-4o-mini">gpt-4o-mini — fast, affordable (recommended)</option>
               <option value="gpt-4o">gpt-4o — most capable</option>
               <option value="gpt-4-turbo">gpt-4-turbo</option>
             </select>
+            <small>Only used when no Assistant ID is configured.</small>
           </div>
         </div>
         <div class="card">
@@ -510,7 +529,10 @@ function populateForms(){
   renderQRs((content.chat&&content.chat.quick_replies)||[]);
   $('chat.system_prompt').value=extractPrompt(chatJS);
   // OpenAI key from chat.js
-  var km=chatJS.match(/Bearer\s+([^\s`'"\\]+)/);if(km&&km[1]&&km[1]!=='${process')$('openai-key').value=km[1];
+  var km=chatJS.match(/Bearer\s+([^\s`'"\\]+)/);if(km&&km[1]&&!km[1].startsWith('${'))$('openai-key').value=km[1];
+  // Assistant ID from chat.js
+  var am=chatJS.match(/OPENAI_ASSISTANT_ID\s*\|\|\s*['"]([^'"]*)['"]/);
+  if(am&&am[1]&&am[1].startsWith('asst_'))$('openai-assistant-id').value=am[1];
   // Images
   if(content.images){
     [['logo','prev-logo','clr-logo'],['pfb_photo','prev-pfb','clr-pfb'],['ppg_photo','prev-ppg','clr-ppg']].forEach(function(a){
@@ -558,25 +580,52 @@ function extractPrompt(js){var m=js.match(/const SYSTEM_PROMPT\s*=\s*`([\s\S]*?)
 function injectPrompt(js,p){return js.replace(/(const SYSTEM_PROMPT\s*=\s*`)([\s\S]*?)(`\s*;)/,function(_,a,_b,c){return a+p+c;});}
 function injectModel(js,m){return js.replace(/(model:\s*['"])[^'"]+(['"])/,function(_,a,b){return a+m+b;});}
 function injectKey(js,key){
-  // Replace 'Bearer <key>' pattern
+  if(!key)return js;
   js=js.replace(/(Authorization.*?[Bb]earer\s+)([^\s'"\\`]+)/g,function(_,p){return p+key;});
-  // Also replace direct string if present
-  js=js.replace(/(process\.env\.OPENAI_API_KEY\s*\|\|\s*['"])([^'"]*)(["'])/g,function(_,a,_b,c){return a+key+c;});
+  js=js.replace(/(process\.env\.OPENAI_API_KEY\s*\|\|\s*['"])([^'"]*)(['"])/g,function(_,a,_b,cc){return a+key+cc;});
   return js;
 }
 
-/* ── OPENAI TEST ── */
+function injectAssistantId(js,aid){
+  if(!aid)return js;
+  js=js.replace(/(OPENAI_ASSISTANT_ID\s*=\s*process\.env\.OPENAI_ASSISTANT_ID\s*\|\|\s*['"])([^'"]*)(['"])/g,
+    function(_,a,_b,cc){return a+aid+cc;});
+  return js;
+}
+
+/* ── OPENAI TESTS ── */
 function testOpenAI(){
   var key=$('openai-key').value.trim();
   var box=$('api-status-box');
   if(!key){box.innerHTML='<div class="api-pill err">⚠ Enter a key first</div>';return;}
-  box.innerHTML='<div class="api-pill wait">⏳ Testing connection…</div>';
+  box.innerHTML='<div class="api-pill wait">⏳ Testing…</div>';
   fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}})
     .then(function(r){
-      box.innerHTML=r.ok
-        ?'<div class="api-pill ok">✓ Connected — API key is valid</div>'
-        :'<div class="api-pill err">✕ Invalid key or quota exceeded ('+r.status+')</div>';
-    }).catch(function(){box.innerHTML='<div class="api-pill err">✕ Network error</div>';});
+      if(r.ok){box.innerHTML='<div class="api-pill ok">✓ API key is valid — connected to OpenAI</div>';}
+      else{box.innerHTML='<div class="api-pill err">✕ Invalid key or quota exceeded ('+r.status+')</div>';}
+    }).catch(function(){box.innerHTML='<div class="api-pill err">✕ Network error — check your connection</div>';});
+}
+
+function testAssistant(){
+  var key=$('openai-key').value.trim();
+  var aid=$('openai-assistant-id').value.trim();
+  var box=$('asst-status-box');
+  if(!key){box.innerHTML='<div class="api-pill err">⚠ Enter your API key first</div>';return;}
+  if(!aid){box.innerHTML='<div class="api-pill err">⚠ Enter an Assistant ID first</div>';return;}
+  if(!aid.startsWith('asst_')){box.innerHTML='<div class="api-pill err">⚠ Assistant ID must start with asst_</div>';return;}
+  box.innerHTML='<div class="api-pill wait">⏳ Looking up assistant…</div>';
+  fetch('https://api.openai.com/v1/assistants/'+aid,{
+    headers:{'Authorization':'Bearer '+key,'OpenAI-Beta':'assistants=v2'}
+  }).then(function(r){return r.json().then(function(d){return{ok:r.ok,d:d};});})
+  .then(function(res){
+    if(res.ok){
+      var name=res.d.name||'Unnamed';
+      var model=res.d.model||'';
+      box.innerHTML='<div class="api-pill ok">✓ Assistant found: <strong>'+name+'</strong> ('+model+')</div>';
+    } else {
+      box.innerHTML='<div class="api-pill err">✕ '+(res.d.error?.message||'Assistant not found')+' — check the ID and key</div>';
+    }
+  }).catch(function(){box.innerHTML='<div class="api-pill err">✕ Network error</div>';});
 }
 
 /* ── PUBLISH ── */
@@ -592,6 +641,7 @@ function publishAll(){
   var np=$('chat.system_prompt').value;if(np)nJS=injectPrompt(nJS,np);
   var nm=$('chat.openai_model').value;if(nm)nJS=injectModel(nJS,nm);
   var nk=$('openai-key').value.trim();if(nk)nJS=injectKey(nJS,nk);
+  var na=$('openai-assistant-id').value.trim();if(na)nJS=injectAssistantId(nJS,na);
   var done=function(){btn.disabled=false;btn.textContent='↑ Publish to site';};
   ghP('content.json',JSON.stringify(content,null,2),cSHA)
     .then(function(res){cSHA=res.content.sha;return ghP('api/chat.js',nJS,jsSHA);})
