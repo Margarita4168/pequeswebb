@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peques Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --taupe: #CFC7B7; --taupe-dk: #A89E8E; --taupe-lt: #E8E2D8;
+      --sage: #9FB87A; --sage-lt: #C8D9A8;
+      --peach: #F7D7B5; --peach-dk: #E8B880;
+      --ink: #2E2A22; --ink-mid: #5C5448; --ink-lt: #8C8070;
+      --cream: #FAF7F2; --cream-2: #F2EDE4; --cream-3: #EDE5D8;
+      --warm-white: #FFFDF9;
+      --red: #C0392B; --green: #27AE60;
+      --t: 0.22s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body { font-family: 'Raleway', sans-serif; background: var(--cream-2); color: var(--ink); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--ink);
+    }
+    .login-card {
+      background: var(--warm-white); border-radius: 20px; padding: 48px 44px;
+      width: 100%; max-width: 420px; box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    }
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300;
+      color: var(--ink); text-align: center; margin-bottom: 6px;
+    }
+    .login-logo span { color: var(--sage); font-weight: 600; }
+    .login-sub { text-align: center; font-size: 0.75rem; color: var(--ink-lt); margin-bottom: 36px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+    .login-field label { font-size: 0.72rem; font-weight: 700; color: var(--ink-mid); letter-spacing: 0.06em; }
+    .login-field input {
+      padding: 10px 14px; border: 1.5px solid var(--taupe); border-radius: 8px;
+      font-family: 'Raleway', sans-serif; font-size: 0.84rem; color: var(--ink);
+      background: #fff; outline: none; transition: border-color var(--t);
+    }
+    .login-field input:focus { border-color: var(--sage); }
+    .login-field .hint { font-size: 0.66rem; color: var(--ink-lt); margin-top: 2px; }
+    .login-btn {
+      width: 100%; padding: 13px; border: none; border-radius: 50px;
+      background: var(--sage); color: #fff; font-family: 'Raleway', sans-serif;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      cursor: pointer; transition: background var(--t); margin-top: 8px;
+    }
+    .login-btn:hover { background: #88a660; }
+    .login-err { color: var(--red); font-size: 0.74rem; margin-top: 10px; text-align: center; display: none; }
+
+    /* ── SHELL ── */
+    #app { display: none; height: 100vh; flex-direction: column; }
+    #app.show { display: flex; }
+
+    /* Top bar */
+    .topbar {
+      height: 56px; background: var(--ink); display: flex;
+      align-items: center; padding: 0 24px; gap: 16px; flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .topbar-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 300;
+      color: #fff; margin-right: auto;
+    }
+    .topbar-logo span { color: var(--sage); }
+    .topbar-status { font-size: 0.68rem; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; }
+    .topbar-status.ok { color: rgba(159,184,122,0.8); }
+    .topbar-status.saving { color: var(--peach-dk); }
+    #publish-btn {
+      padding: 9px 22px; background: var(--sage); color: #fff; border: none;
+      border-radius: 50px; font-family: 'Raleway', sans-serif; font-size: 0.7rem;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: background var(--t);
+    }
+    #publish-btn:hover { background: #88a660; }
+    #publish-btn:disabled { background: var(--taupe-dk); cursor: default; }
+    #logout-btn {
+      padding: 7px 14px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 50px;
+      font-family: 'Raleway', sans-serif; font-size: 0.66rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+      transition: all var(--t);
+    }
+    #logout-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* Main layout */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px; background: var(--warm-white); border-right: 1px solid var(--cream-3);
+      flex-shrink: 0; padding: 24px 0; overflow-y: auto;
+    }
+    .sidebar-section { padding: 0 16px 8px; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--taupe-dk); margin-top: 16px; }
+    .nav-btn {
+      display: flex; align-items: center; gap: 9px; padding: 9px 20px;
+      width: 100%; border: none; background: none; cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: 0.78rem; font-weight: 500;
+      color: var(--ink-mid); text-align: left; transition: all var(--t); border-radius: 0;
+    }
+    .nav-btn:hover { background: var(--cream-2); color: var(--ink); }
+    .nav-btn.active { background: var(--sage-lt); color: var(--ink); font-weight: 700; }
+    .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+
+    /* Content area */
+    .content { flex: 1; overflow-y: auto; padding: 32px 36px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300;
+      color: var(--ink); margin-bottom: 6px; line-height: 1.1;
+    }
+    .panel-title em { font-style: italic; color: var(--taupe-dk); }
+    .panel-lead { font-size: 0.82rem; font-weight: 300; color: var(--ink-mid); margin-bottom: 28px; line-height: 1.7; }
+
+    /* Cards */
+    .card {
+      background: var(--warm-white); border-radius: 14px; padding: 24px 26px;
+      margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .card-title {
+      font-size: 0.64rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--sage); margin-bottom: 18px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--cream-3);
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    /* Form fields */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field-row.single { grid-template-columns: 1fr; }
+    .field-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .field label { font-size: 0.68rem; font-weight: 700; color: var(--ink-mid); letter-spacing: 0.05em; }
+    .field .desc { font-size: 0.64rem; color: var(--ink-lt); }
+    .field input, .field textarea, .field select {
+      padding: 9px 12px; border: 1.5px solid var(--taupe); border-radius: 8px;
+      font-family: 'Raleway', sans-serif; font-size: 0.82rem; color: var(--ink);
+      background: #fff; outline: none; width: 100%;
+      transition: border-color var(--t);
+    }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--sage); }
+    .field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+    /* Info box */
+    .info-box {
+      background: var(--cream-2); border-radius: 10px; padding: 16px 18px;
+      border-left: 3px solid var(--sage); margin-bottom: 16px;
+    }
+    .info-box p { font-size: 0.76rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid); }
+    .info-box strong { font-weight: 700; color: var(--ink); }
+    .info-box.warn { border-color: var(--peach-dk); }
+    .info-box ol, .info-box ul { padding-left: 18px; margin-top: 8px; }
+    .info-box li { font-size: 0.74rem; color: var(--ink-mid); margin-bottom: 5px; line-height: 1.6; }
+    .info-box code {
+      background: rgba(0,0,0,0.07); padding: 1px 5px; border-radius: 3px;
+      font-family: monospace; font-size: 0.8em; color: var(--ink);
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px);
+      background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22); opacity: 0; pointer-events: none;
+      transition: all 0.3s ease; z-index: 999; display: flex; align-items: center; gap: 8px;
+      border-top: 3px solid var(--sage); white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.error { border-color: var(--red); }
+    #toast.success { border-color: var(--sage); }
+
+    /* Chat quick replies editor */
+    .qr-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .qr-item { display: grid; grid-template-columns: 1fr 2fr 32px; gap: 8px; align-items: center; }
+    .qr-item input { margin-bottom: 0; }
+    .qr-remove {
+      width: 28px; height: 28px; border-radius: 50%; background: none;
+      border: 1.5px solid var(--taupe-dk); color: var(--ink-lt); cursor: pointer;
+      font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
+      transition: all var(--t);
+    }
+    .qr-remove:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .add-btn {
+      padding: 7px 16px; background: none; border: 1.5px dashed var(--taupe);
+      border-radius: 50px; color: var(--ink-lt); cursor: pointer;
+      font-family: 'Raleway', sans-serif; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.08em; transition: all var(--t);
+    }
+    .add-btn:hover { border-color: var(--sage); color: var(--sage); background: var(--sage-lt); }
+
+    @media(max-width: 768px) {
+      .sidebar { width: 56px; }
+      .sidebar-section, .nav-btn span { display: none; }
+      .nav-btn { justify-content: center; padding: 12px; }
+      .field-row, .field-row.thirds { grid-template-columns: 1fr; }
+      .content { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🌿 <span>Peques</span> Admin</div>
+    <p class="login-sub">Site Management Dashboard</p>
+    <div class="login-field">
+      <label>Admin Password</label>
+      <input type="password" id="admin-pw" placeholder="Enter password…" autocomplete="current-password" />
+    </div>
+    <div class="login-field">
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="gh-token" placeholder="ghp_…" autocomplete="off" />
+      <span class="hint">Needs <strong>contents:write</strong> scope. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--sage)">Create one →</a></span>
+    </div>
+    <div class="login-field">
+      <label>Repository (owner/repo)</label>
+      <input type="text" id="gh-repo" placeholder="e.g. Margarita4168/peques-landing" />
+    </div>
+    <div class="login-field">
+      <label>Branch</label>
+      <input type="text" id="gh-branch" value="main" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">🌿 <span>Peques</span> Admin</div>
+    <div class="topbar-status" id="status-label">Ready</div>
+    <button id="publish-btn" onclick="publishAll()">↑ Publish Changes</button>
+    <button id="logout-btn" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">Pages</div>
+      <button class="nav-btn active" onclick="showPanel('landing')">
+        <span class="nav-icon">🏠</span><span>Landing Page</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('careers')">
+        <span class="nav-icon">💼</span><span>Careers</span>
+      </button>
+      <div class="sidebar-section">Tools</div>
+      <button class="nav-btn" onclick="showPanel('chat')">
+        <span class="nav-icon">💬</span><span>Chat Assistant</span>
+      </button>
+      <button class="nav-btn" onclick="showPanel('github')">
+        <span class="nav-icon">⚙️</span><span>GitHub Settings</span>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── LANDING PAGE ── -->
+      <div class="panel active" id="panel-landing">
+        <div class="panel-title">Landing Page <em>Content</em></div>
+        <p class="panel-lead">Edit text displayed on peques.co.uk. Changes are published to GitHub and go live on Vercel within ~30 seconds of clicking Publish.</p>
+
+        <div class="card">
+          <div class="card-title">📝 Hero Section</div>
+          <div class="field field-row single">
+            <label>Subtitle</label>
+            <textarea id="hero.subtitle" rows="3"></textarea>
+          </div>
+          <div class="field-row thirds">
+            <div class="field">
+              <label>Stat 1 — Number</label>
+              <input type="text" id="hero.stat1_num" />
+            </div>
+            <div class="field">
+              <label>Stat 1 — Label</label>
+              <input type="text" id="hero.stat1_label" />
+            </div>
+          </div>
+          <div class="field-row thirds">
+            <div class="field">
+              <label>Stat 2 — Number</label>
+              <input type="text" id="hero.stat2_num" />
+            </div>
+            <div class="field">
+              <label>Stat 2 — Label</label>
+              <input type="text" id="hero.stat2_label" />
+            </div>
+          </div>
+          <div class="field-row thirds">
+            <div class="field">
+              <label>Stat 3 — Number</label>
+              <input type="text" id="hero.stat3_num" />
+            </div>
+            <div class="field">
+              <label>Stat 3 — Label</label>
+              <input type="text" id="hero.stat3_label" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🏫 Fulham Broadway (PFB)</div>
+          <div class="field">
+            <label>Setting Name</label>
+            <input type="text" id="pfb.name" />
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="pfb.desc" rows="2"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Address</label>
+              <input type="text" id="pfb.address" />
+            </div>
+            <div class="field">
+              <label>Phone</label>
+              <input type="text" id="pfb.phone" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🌿 Parsons Green (PPG)</div>
+          <div class="field">
+            <label>Setting Name</label>
+            <input type="text" id="ppg.name" />
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="ppg.desc" rows="2"></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Address</label>
+              <input type="text" id="ppg.address" />
+            </div>
+            <div class="field">
+              <label>Phone</label>
+              <input type="text" id="ppg.phone" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💬 Testimonials</div>
+          <!-- T1 -->
+          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 1</div>
+            <div class="field">
+              <label>Quote</label>
+              <textarea id="t1.text" rows="3"></textarea>
+            </div>
+            <div class="field-row thirds">
+              <div class="field">
+                <label>Initial (avatar)</label>
+                <input type="text" id="t1.initial" maxlength="2" style="text-transform:uppercase" />
+              </div>
+              <div class="field">
+                <label>Name</label>
+                <input type="text" id="t1.name" />
+              </div>
+              <div class="field">
+                <label>Role / Setting</label>
+                <input type="text" id="t1.role" />
+              </div>
+            </div>
+          </div>
+          <!-- T2 -->
+          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;margin-bottom:14px;">
+            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 2</div>
+            <div class="field">
+              <label>Quote</label>
+              <textarea id="t2.text" rows="3"></textarea>
+            </div>
+            <div class="field-row thirds">
+              <div class="field">
+                <label>Initial</label>
+                <input type="text" id="t2.initial" maxlength="2" style="text-transform:uppercase" />
+              </div>
+              <div class="field">
+                <label>Name</label>
+                <input type="text" id="t2.name" />
+              </div>
+              <div class="field">
+                <label>Role / Setting</label>
+                <input type="text" id="t2.role" />
+              </div>
+            </div>
+          </div>
+          <!-- T3 -->
+          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;">
+            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 3</div>
+            <div class="field">
+              <label>Quote</label>
+              <textarea id="t3.text" rows="3"></textarea>
+            </div>
+            <div class="field-row thirds">
+              <div class="field">
+                <label>Initial</label>
+                <input type="text" id="t3.initial" maxlength="2" style="text-transform:uppercase" />
+              </div>
+              <div class="field">
+                <label>Name</label>
+                <input type="text" id="t3.name" />
+              </div>
+              <div class="field">
+                <label>Role / Setting</label>
+                <input type="text" id="t3.role" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📣 CTA Banner</div>
+          <div class="field">
+            <label>Title</label>
+            <input type="text" id="cta.title" />
+          </div>
+          <div class="field">
+            <label>Subtitle</label>
+            <textarea id="cta.subtitle" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CAREERS ── -->
+      <div class="panel" id="panel-careers">
+        <div class="panel-title">Careers <em>Page</em></div>
+        <p class="panel-lead">The careers page (careers.html) is managed separately in GitHub. Use this panel for quick reference.</p>
+        <div class="info-box">
+          <p>To edit the <strong>Careers page</strong> content (roles, form, text), open <code>careers.html</code> directly in GitHub and edit the HTML. The file is clearly commented — search for the section you want to update.</p>
+          <ol>
+            <li>Go to your GitHub repository</li>
+            <li>Click on <code>careers.html</code></li>
+            <li>Click the pencil icon ✏️ to edit</li>
+            <li>Search for the text you want to change (Ctrl+F in the editor)</li>
+            <li>Commit the change — Vercel redeploys automatically</li>
+          </ol>
+        </div>
+        <div class="info-box warn">
+          <p><strong>Formspree email routing:</strong> To change where application forms are sent, find <code>careers@peques.co.uk</code> in the Formspree dashboard and update the notification email there — no code change needed.</p>
+        </div>
+      </div>
+
+      <!-- ── CHAT ASSISTANT ── -->
+      <div class="panel" id="panel-chat">
+        <div class="panel-title">Chat <em>Assistant</em></div>
+        <p class="panel-lead">Configure the AI chat widget that appears on the landing page. Changes to the system prompt take effect on next publish.</p>
+
+        <div class="card">
+          <div class="card-title">🔑 OpenAI API Key</div>
+          <div class="info-box">
+            <p>The API key is stored securely as a <strong>Vercel environment variable</strong> — it never appears in the code. To update it:</p>
+            <ol>
+              <li>Go to <strong>vercel.com</strong> → your project → <strong>Settings → Environment Variables</strong></li>
+              <li>Find <code>OPENAI_API_KEY</code> and click Edit</li>
+              <li>Paste your new key (from <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--sage)">platform.openai.com/api-keys</a>)</li>
+              <li>Save, then go to Deployments and click <strong>Redeploy</strong></li>
+            </ol>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>OpenAI Model</label>
+              <select id="chat.openai_model">
+                <option value="gpt-4o-mini">gpt-4o-mini (fast, affordable — recommended)</option>
+                <option value="gpt-4o">gpt-4o (more capable, higher cost)</option>
+                <option value="gpt-4-turbo">gpt-4-turbo</option>
+              </select>
+              <span class="desc">Model is set in api/chat.js and updated on publish.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💬 Chat Behaviour</div>
+          <div class="field">
+            <label>Welcome Message</label>
+            <textarea id="chat.welcome" rows="3"></textarea>
+            <span class="desc">The first message shown when a visitor opens the chat.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡ Quick Reply Buttons</div>
+          <div id="qr-list" class="qr-list"></div>
+          <button class="add-btn" onclick="addQR()">+ Add quick reply</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🧠 AI System Prompt</div>
+          <div class="info-box">
+            <p>This is the instruction given to the AI before every conversation. It defines what the assistant knows about Peques and how it should respond. Keep it accurate and up to date.</p>
+          </div>
+          <div class="field field-row single">
+            <textarea id="chat.system_prompt" rows="24" style="font-family:monospace;font-size:0.78rem;line-height:1.6;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GITHUB SETTINGS ── -->
+      <div class="panel" id="panel-github">
+        <div class="panel-title">GitHub <em>Settings</em></div>
+        <p class="panel-lead">Update your GitHub connection. Changes apply immediately — no publish needed.</p>
+        <div class="card">
+          <div class="card-title">⚙️ Connection</div>
+          <div class="field">
+            <label>Personal Access Token</label>
+            <input type="password" id="s-gh-token" />
+            <span class="desc">Needs <strong>contents:write</strong> scope.</span>
+          </div>
+          <div class="field">
+            <label>Repository (owner/name)</label>
+            <input type="text" id="s-gh-repo" />
+          </div>
+          <div class="field">
+            <label>Branch</label>
+            <input type="text" id="s-gh-branch" />
+          </div>
+          <div class="field">
+            <label>Admin Password</label>
+            <input type="password" id="s-admin-pw" placeholder="Leave blank to keep current" />
+            <span class="desc">Password required to access this admin dashboard.</span>
+          </div>
+          <button class="login-btn" style="max-width:200px" onclick="saveSettings()">Save settings</button>
+        </div>
+        <div class="card">
+          <div class="card-title">ℹ️ How publishing works</div>
+          <div class="info-box">
+            <p>When you click <strong>↑ Publish Changes</strong>, this admin writes to two files in your GitHub repository:</p>
+            <ul>
+              <li><code>content.json</code> — all editable text content</li>
+              <li><code>api/chat.js</code> — chat assistant configuration</li>
+            </ul>
+            <p style="margin-top:8px;">Vercel detects the GitHub commit and redeploys automatically. The live site updates within <strong>~30 seconds</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div id="toast">✓ <span id="toast-msg">Saved</span></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+var cfg = {};       // { token, repo, branch, pw }
+var content = {};   // content.json object
+var chatJS  = '';   // raw api/chat.js text
+var dirty   = false;
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+var ADMIN_PW_KEY = 'pq_admin_pw';
+var DEFAULT_PW   = 'peques2025';
+
+function doLogin() {
+  var pw     = document.getElementById('admin-pw').value.trim();
+  var token  = document.getElementById('gh-token').value.trim();
+  var repo   = document.getElementById('gh-repo').value.trim();
+  var branch = document.getElementById('gh-branch').value.trim() || 'main';
+  var storedPw = localStorage.getItem(ADMIN_PW_KEY) || DEFAULT_PW;
+  var err = document.getElementById('login-err');
+
+  if (pw !== storedPw) {
+    err.textContent = 'Incorrect password.'; err.style.display = 'block'; return;
+  }
+  if (!token || !repo) {
+    err.textContent = 'Please fill in all fields.'; err.style.display = 'block'; return;
+  }
+
+  cfg = { token: token, repo: repo, branch: branch };
+  localStorage.setItem('pq_cfg', JSON.stringify(cfg));
+  err.style.display = 'none';
+  startApp();
+}
+
+function doLogout() {
+  cfg = {}; content = {}; chatJS = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').classList.remove('show');
+}
+
+function saveSettings() {
+  var token  = document.getElementById('s-gh-token').value.trim();
+  var repo   = document.getElementById('s-gh-repo').value.trim();
+  var branch = document.getElementById('s-gh-branch').value.trim() || 'main';
+  var pw     = document.getElementById('s-admin-pw').value.trim();
+  if (token)  cfg.token  = token;
+  if (repo)   cfg.repo   = repo;
+  if (branch) cfg.branch = branch;
+  if (pw)     localStorage.setItem(ADMIN_PW_KEY, pw);
+  localStorage.setItem('pq_cfg', JSON.stringify(cfg));
+  showToast('Settings saved', 'success');
+}
+
+/* ═══════════════════════════════════════════
+   APP INIT
+═══════════════════════════════════════════ */
+function startApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  // Populate settings panel
+  document.getElementById('s-gh-token').value  = cfg.token  || '';
+  document.getElementById('s-gh-repo').value   = cfg.repo   || '';
+  document.getElementById('s-gh-branch').value = cfg.branch || 'main';
+  setStatus('Loading…', false);
+  Promise.all([loadContentJSON(), loadChatJS()])
+    .then(function() {
+      populateForms();
+      setStatus('Loaded — ready', true);
+    })
+    .catch(function(e) {
+      setStatus('Load error: ' + e.message, false);
+      showToast('Error: ' + e.message, 'error');
+    });
+}
+
+/* ═══════════════════════════════════════════
+   GITHUB API
+═══════════════════════════════════════════ */
+function ghFetch(path, opts) {
+  return fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, Object.assign({
+    headers: {
+      'Authorization': 'token ' + cfg.token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    }
+  }, opts));
+}
+
+function getFile(path) {
+  return ghFetch(path + '?ref=' + cfg.branch)
+    .then(function(r) {
+      if (!r.ok) throw new Error('Could not fetch ' + path + ' (' + r.status + ')');
+      return r.json();
+    });
+}
+
+function putFile(path, contentStr, sha) {
+  var b64 = btoa(unescape(encodeURIComponent(contentStr)));
+  var body = { message: 'Admin: update ' + path, content: b64, branch: cfg.branch };
+  if (sha) body.sha = sha;
+  return ghFetch(path, {
+    method: 'PUT',
+    body: JSON.stringify(body)
+  }).then(function(r) {
+    if (!r.ok) return r.json().then(function(d) { throw new Error(d.message || r.status); });
+    return r.json();
+  });
+}
+
+/* ═══════════════════════════════════════════
+   LOAD FILES
+═══════════════════════════════════════════ */
+var contentSHA = '';
+var chatJSSHA  = '';
+
+function loadContentJSON() {
+  return getFile('content.json').then(function(data) {
+    contentSHA = data.sha;
+    var raw = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+    content = JSON.parse(raw);
+  });
+}
+
+function loadChatJS() {
+  return getFile('api/chat.js').then(function(data) {
+    chatJSSHA = data.sha;
+    chatJS = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+  });
+}
+
+/* ═══════════════════════════════════════════
+   POPULATE FORMS
+═══════════════════════════════════════════ */
+var FLAT_KEYS = [
+  'hero.subtitle','hero.stat1_num','hero.stat1_label',
+  'hero.stat2_num','hero.stat2_label','hero.stat3_num','hero.stat3_label',
+  'pfb.name','pfb.desc','pfb.address','pfb.phone',
+  'ppg.name','ppg.desc','ppg.address','ppg.phone',
+  't1.text','t1.initial','t1.name','t1.role',
+  't2.text','t2.initial','t2.name','t2.role',
+  't3.text','t3.initial','t3.name','t3.role',
+  'cta.title','cta.subtitle',
+  'chat.welcome'
+];
+
+function deepGet(obj, path) {
+  return path.split('.').reduce(function(o,k){ return o!=null ? o[k] : undefined; }, obj);
+}
+function deepSet(obj, path, val) {
+  var parts = path.split('.');
+  var o = obj;
+  for (var i = 0; i < parts.length - 1; i++) {
+    if (o[parts[i]] == null) o[parts[i]] = {};
+    o = o[parts[i]];
+  }
+  o[parts[parts.length-1]] = val;
+}
+
+function populateForms() {
+  FLAT_KEYS.forEach(function(key) {
+    var el = document.getElementById(key);
+    if (el) { var v = deepGet(content, key); if (v != null) el.value = v; }
+  });
+
+  // Chat model
+  var modelEl = document.getElementById('chat.openai_model');
+  if (modelEl && content.chat && content.chat.openai_model) {
+    modelEl.value = content.chat.openai_model;
+  }
+
+  // Quick replies
+  var qrs = (content.chat && content.chat.quick_replies) || [];
+  renderQRs(qrs);
+
+  // System prompt — extract from chat.js
+  var sp = extractSystemPrompt(chatJS);
+  document.getElementById('chat.system_prompt').value = sp;
+}
+
+/* ═══════════════════════════════════════════
+   QUICK REPLIES
+═══════════════════════════════════════════ */
+function renderQRs(qrs) {
+  var list = document.getElementById('qr-list');
+  list.innerHTML = '';
+  qrs.forEach(function(qr, i) {
+    var div = document.createElement('div');
+    div.className = 'qr-item';
+    div.innerHTML = '<input type="text" placeholder="Button label" value="' + esc(qr.label||'') + '" data-qr-label="'+i+'" />' +
+      '<input type="text" placeholder="Message sent to AI" value="' + esc(qr.message||'') + '" data-qr-msg="'+i+'" />' +
+      '<button class="qr-remove" onclick="removeQR('+i+')">✕</button>';
+    list.appendChild(div);
+  });
+}
+
+function getQRs() {
+  var labels = document.querySelectorAll('[data-qr-label]');
+  var msgs   = document.querySelectorAll('[data-qr-msg]');
+  var out = [];
+  for (var i = 0; i < labels.length; i++) {
+    out.push({ label: labels[i].value, message: msgs[i].value });
+  }
+  return out;
+}
+
+function addQR() {
+  var current = getQRs();
+  current.push({ label: '', message: '' });
+  renderQRs(current);
+}
+
+function removeQR(idx) {
+  var current = getQRs();
+  current.splice(idx, 1);
+  renderQRs(current);
+}
+
+function esc(s) { return s.replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+/* ═══════════════════════════════════════════
+   CHAT.JS PARSING
+═══════════════════════════════════════════ */
+function extractSystemPrompt(js) {
+  var m = js.match(/const SYSTEM_PROMPT\s*=\s*`([\s\S]*?)`\s*;/);
+  return m ? m[1] : '';
+}
+
+function injectSystemPrompt(js, newPrompt) {
+  return js.replace(
+    /(const SYSTEM_PROMPT\s*=\s*`)([\s\S]*?)(`\s*;)/,
+    function(_, open, _old, close) { return open + newPrompt + close; }
+  );
+}
+
+function injectModel(js, model) {
+  return js.replace(
+    /(model:\s*['"])[^'"]+(['"])/,
+    function(_, open, close) { return open + model + close; }
+  );
+}
+
+function injectWelcome(js, msg) {
+  return js.replace(
+    /(const GREETING\s*=\s*')([\s\S]*?)('\s*;)/,
+    function(_, open, _old, close) { return open + msg.replace(/'/g,"\\'") + close; }
+  );
+}
+
+/* ═══════════════════════════════════════════
+   PUBLISH
+═══════════════════════════════════════════ */
+function publishAll() {
+  var btn = document.getElementById('publish-btn');
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  setStatus('Saving…', false);
+
+  // Collect form values into content object
+  FLAT_KEYS.forEach(function(key) {
+    var el = document.getElementById(key);
+    if (el) deepSet(content, key, el.value);
+  });
+
+  // Quick replies
+  if (!content.chat) content.chat = {};
+  content.chat.quick_replies = getQRs();
+  content.chat.openai_model = document.getElementById('chat.openai_model').value;
+  content.updated = new Date().toISOString();
+
+  // Update chat.js
+  var newPrompt = document.getElementById('chat.system_prompt').value;
+  var newModel  = document.getElementById('chat.openai_model').value;
+  var newWelcome = document.getElementById('chat.welcome').value;
+  var newChatJS = chatJS;
+  newChatJS = injectSystemPrompt(newChatJS, newPrompt);
+  newChatJS = injectModel(newChatJS, newModel);
+  newChatJS = injectWelcome(newChatJS, newWelcome);
+
+  var contentStr = JSON.stringify(content, null, 2);
+
+  // Commit content.json then api/chat.js
+  putFile('content.json', contentStr, contentSHA)
+    .then(function(res) {
+      contentSHA = res.content.sha;
+      return putFile('api/chat.js', newChatJS, chatJSSHA);
+    })
+    .then(function(res) {
+      chatJSSHA = res.content.sha;
+      chatJS = newChatJS;
+      btn.disabled = false; btn.textContent = '↑ Publish Changes';
+      setStatus('Published ✓ — live in ~30s', true);
+      showToast('Published! Site updating…', 'success');
+    })
+    .catch(function(e) {
+      btn.disabled = false; btn.textContent = '↑ Publish Changes';
+      setStatus('Error: ' + e.message, false);
+      showToast('Error: ' + e.message, 'error');
+    });
+}
+
+/* ═══════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════ */
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('panel-' + id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function setStatus(msg, ok) {
+  var el = document.getElementById('status-label');
+  el.textContent = msg;
+  el.className = 'topbar-status' + (ok ? ' ok' : '');
+}
+
+var toastTimer;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.className = ''; }, 4000);
+}
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+(function init() {
+  var saved = localStorage.getItem('pq_cfg');
+  if (saved) {
+    try { cfg = JSON.parse(saved); } catch(e) {}
+    if (cfg.token && cfg.repo) {
+      // Pre-fill login form and auto-proceed if remembered
+      document.getElementById('gh-token').value  = cfg.token;
+      document.getElementById('gh-repo').value   = cfg.repo;
+      document.getElementById('gh-branch').value = cfg.branch || 'main';
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

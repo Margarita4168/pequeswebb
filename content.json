@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "updated": "2025-01-01T00:00:00Z",
+  "hero": {
+    "subtitle": "Award-winning trilingual nursery schools in the heart of Fulham. English, Spanish & Mandarin — giving every child the very strongest foundation for a life well lived.",
+    "stat1_num": "27",
+    "stat1_label": "Years established",
+    "stat2_num": "116",
+    "stat2_label": "Children in our care",
+    "stat3_num": "3",
+    "stat3_label": "Languages daily"
+  },
+  "pfb": {
+    "name": "Peques Fulham Broadway",
+    "desc": "Set within St John's Church on North End Road — five minutes from Fulham Broadway Station (District line), with a large, beautiful garden the children love.",
+    "address": "St John's Church, North End Rd, Fulham SW6 1PB",
+    "phone": "0207 385 0055"
+  },
+  "ppg": {
+    "name": "Peques Parsons Green",
+    "desc": "Located between Fulham Broadway and Parsons Green stations on Dawes Road, with a beautiful outdoor patio and an allotment the children tend themselves.",
+    "address": "Fulham Baptist Church, Dawes Rd, Fulham SW6 7EG",
+    "phone": "0207 385 5333"
+  },
+  "t1": {
+    "text": "Our daughter has been at Peques since she was two years old. The trilingual environment has been transformative — she moves between languages with complete confidence and an ease that astonishes everyone who meets her.",
+    "initial": "S",
+    "name": "Sofia R.",
+    "role": "Parent · Peques Fulham Broadway"
+  },
+  "t2": {
+    "text": "What sets Peques apart is the warmth. You can feel it the moment you walk through the door. The team knows every child individually, and that personal connection makes all the difference.",
+    "initial": "J",
+    "name": "James T.",
+    "role": "Parent · Peques Parsons Green"
+  },
+  "t3": {
+    "text": "The Peques approach to learning is genuinely child-led. Our son arrives each morning excited, and comes home each afternoon having explored something new. As parents, we could not ask for more.",
+    "initial": "L",
+    "name": "Laura & Miguel F.",
+    "role": "Parents · Peques Fulham Broadway"
+  },
+  "cta": {
+    "title": "Begin your child's journey with Peques",
+    "subtitle": "We welcome visits warmly — it is the best way to see our settings, meet the team, and feel the Peques community for yourself. Contact Head Office directly to arrange yours."
+  },
+  "chat": {
+    "welcome": "Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I'm here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?"
+  }
+}
