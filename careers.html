@@ -383,6 +383,33 @@
       font-size: 0.8rem; font-weight: 300; line-height: 1.75; color: var(--ink-mid);
     }
 
+    /* SUCCESS TOAST POPUP */
+    #pq-toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      z-index: 9999;
+      background: var(--ink);
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: 50px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Raleway', sans-serif; font-size: 0.88rem; font-weight: 600;
+      white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      border-top: 3px solid var(--sage-dark);
+    }
+    #pq-toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+    #pq-toast .toast-icon { font-size: 1.2rem; }
+    #pq-toast .toast-close {
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      cursor: pointer; font-size: 1rem; padding: 0 0 0 8px;
+      line-height: 1; transition: color 0.2s;
+    }
+    #pq-toast .toast-close:hover { color: #fff; }
+
     /* RESPONSIVE */
     @media(max-width: 768px) {
       .roles-grid  { grid-template-columns: 1fr; }
@@ -464,35 +491,35 @@
     <div class="roles-grid">
 
       <div class="role-card">
-        <div class="role-title">Nursery Nurse (Level 2)</div>
+        <div class="role-title">Unqualified Early Years Assistant</div>
+        <div class="role-tags">
+          <span class="role-tag open">Now recruiting</span>
+          <span class="role-tag">No qualification required</span>
+          <span class="role-tag">PFB &amp; PPG</span>
+        </div>
+        <p class="role-desc">A wonderful starting point for anyone who has a genuine passion for working with young children and would like to build a career in early years. No formal qualification is required — we value warmth, reliability and a love of learning above all. Peques can support the right candidate towards a recognised qualification from day one.</p>
+        <a href="#apply-form" class="role-apply">Apply below &#8594;</a>
+      </div>
+
+      <div class="role-card">
+        <div class="role-title">Level 2 Early Years Practitioner</div>
         <div class="role-tags">
           <span class="role-tag open">Now recruiting</span>
           <span class="role-tag">Level 2</span>
           <span class="role-tag">PFB &amp; PPG</span>
         </div>
-        <p class="role-desc">Support our practitioners in delivering warm, high-quality care and early learning experiences. The role suits someone with a Level 2 EYFS qualification who brings genuine enthusiasm, patience, and a commitment to every child&#39;s wellbeing. Those working towards Level 3 are very welcome to apply.</p>
-        <a href="#apply-form" class="role-apply">Apply below &#8594;</a>
-      </div>
-
-      <div class="role-card">
-        <div class="role-title">Nursery Practitioner (Level 3)</div>
-        <div class="role-tags">
-          <span class="role-tag open">Now recruiting</span>
-          <span class="role-tag">Level 3</span>
-          <span class="role-tag">PFB &amp; PPG</span>
-        </div>
-        <p class="role-desc">Work within our EYFS framework to plan, observe, and support children&#39;s holistic development in a rich trilingual environment. A full and relevant Level 3 EYFS qualification is essential. Experience in a similar setting and a second language are both welcomed.</p>
+        <p class="role-desc">Work alongside our experienced team to deliver warm, play-based learning within the EYFS framework. A Level 2 Early Years qualification (e.g. CACHE, NCFE or NVQ Level 2) is required. Those actively working towards Level 3 are very welcome — we actively support continued professional development within the role.</p>
         <a href="#apply-form" class="role-apply">Apply below &#8594;</a>
       </div>
 
       <div class="role-card" style="grid-column: 1 / -1; max-width: 560px; margin: 0 auto; width: 100%;">
-        <div class="role-title">Senior Practitioner / Level 4 and above</div>
+        <div class="role-title">Level 3 &amp; Above Early Years Educator</div>
         <div class="role-tags">
           <span class="role-tag open">Now recruiting</span>
-          <span class="role-tag">Level 4 &ndash; 7 / EYITT</span>
+          <span class="role-tag">Level 3 &ndash; 7 / EYITT</span>
           <span class="role-tag">Both settings</span>
         </div>
-        <p class="role-desc">We welcome applications from experienced early years professionals holding a Level 4 qualification or above — including Foundation Degree (FdA), BA Hons Early Childhood, PGCE, EYTS or EYITT. Roles at this level may include room leadership, curriculum responsibility, mentoring and contributing to our broader pedagogical development. Please indicate your preferred focus in your personal statement.</p>
+        <p class="role-desc">We welcome applications from qualified Early Years Educators at Level 3 and above — including CACHE Level 3, BTEC, Foundation Degree (FdA), BA Hons Early Childhood, PGCE, EYTS or EYITT. Depending on your level and experience, roles may include key person responsibilities, room leadership, curriculum planning and mentoring of junior colleagues. Please indicate your qualification level and preferred focus in your personal statement.</p>
         <a href="#apply-form" class="role-apply">Apply below &#8594;</a>
       </div>
 
@@ -567,9 +594,10 @@
                 <label>Which role interests you? <span class="req">*</span></label>
                 <select name="role" required>
                   <option value="">Select&hellip;</option>
-                  <option>Nursery Nurse (Level 2)</option>
-                  <option>Nursery Practitioner (Level 3)</option>
-                  <option>Senior Practitioner / Level 4 or above</option>
+                  <option>Unqualified Early Years Assistant</option>
+                  <option>Level 2 Early Years Practitioner</option>
+                  <option>Level 3 Early Years Educator</option>
+                  <option>Level 4 or above / EYITT</option>
                   <option>Not sure yet &mdash; I would like to find out more</option>
                 </select>
                 <span class="field-error">Please select a role.</span>
@@ -720,6 +748,13 @@
   </div>
 </section>
 
+<!-- SUCCESS TOAST -->
+<div id="pq-toast" role="status" aria-live="polite">
+  <span class="toast-icon">&#127807;</span>
+  <span>Message sent successfully — we&#39;ll be in touch soon!</span>
+  <button class="toast-close" onclick="document.getElementById('pq-toast').classList.remove('show')" aria-label="Close">&#10005;</button>
+</div>
+
 <!-- FOOTER -->
 <footer class="footer-simple">
   <div class="footer-simple-logo">
@@ -836,9 +871,16 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(function(res) {
       if (res.ok) {
+        /* Show inline success message */
         form.style.display = 'none';
         successBox.classList.add('show');
         successBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        /* Show toast popup */
+        var toast = document.getElementById('pq-toast');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(function() { toast.classList.remove('show'); }, 6000);
+        }
       } else {
         return res.json().then(function(data) {
           throw new Error(data.error || 'Submission failed');
