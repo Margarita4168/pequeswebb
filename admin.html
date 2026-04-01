@@ -3,898 +3,628 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Peques Admin</title>
+  <title>Peques · Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --taupe: #CFC7B7; --taupe-dk: #A89E8E; --taupe-lt: #E8E2D8;
-      --sage: #9FB87A; --sage-lt: #C8D9A8;
-      --peach: #F7D7B5; --peach-dk: #E8B880;
-      --ink: #2E2A22; --ink-mid: #5C5448; --ink-lt: #8C8070;
-      --cream: #FAF7F2; --cream-2: #F2EDE4; --cream-3: #EDE5D8;
-      --warm-white: #FFFDF9;
-      --red: #C0392B; --green: #27AE60;
-      --t: 0.22s ease;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 14px; }
-    body { font-family: 'Raleway', sans-serif; background: var(--cream-2); color: var(--ink); min-height: 100vh; }
+    :root{--taupe:#CFC7B7;--taupe-dk:#A89E8E;--taupe-lt:#E8E2D8;--sage:#9FB87A;--sage-lt:#C8D9A8;--sage-dk:#7A9A5A;--peach:#F7D7B5;--peach-dk:#E8B880;--ink:#2E2A22;--ink-mid:#5C5448;--ink-lt:#8C8070;--cream:#FAF7F2;--cream-2:#F2EDE4;--cream-3:#EDE5D8;--warm-white:#FFFDF9;--red:#C0392B;--green:#27AE60;--t:0.22s ease;--rad:10px;--rad-lg:16px;--sh:0 2px 14px rgba(0,0,0,0.06);--sh-lg:0 12px 40px rgba(0,0,0,0.12);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{font-size:14px;}
+    body{font-family:'Raleway',sans-serif;background:var(--cream-2);color:var(--ink);min-height:100vh;}
+    a{color:var(--sage-dk);}
 
-    /* ── LOGIN ── */
-    #login-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: var(--ink);
-    }
-    .login-card {
-      background: var(--warm-white); border-radius: 20px; padding: 48px 44px;
-      width: 100%; max-width: 420px; box-shadow: 0 24px 80px rgba(0,0,0,0.3);
-    }
-    .login-logo {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300;
-      color: var(--ink); text-align: center; margin-bottom: 6px;
-    }
-    .login-logo span { color: var(--sage); font-weight: 600; }
-    .login-sub { text-align: center; font-size: 0.75rem; color: var(--ink-lt); margin-bottom: 36px; letter-spacing: 0.12em; text-transform: uppercase; }
-    .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
-    .login-field label { font-size: 0.72rem; font-weight: 700; color: var(--ink-mid); letter-spacing: 0.06em; }
-    .login-field input {
-      padding: 10px 14px; border: 1.5px solid var(--taupe); border-radius: 8px;
-      font-family: 'Raleway', sans-serif; font-size: 0.84rem; color: var(--ink);
-      background: #fff; outline: none; transition: border-color var(--t);
-    }
-    .login-field input:focus { border-color: var(--sage); }
-    .login-field .hint { font-size: 0.66rem; color: var(--ink-lt); margin-top: 2px; }
-    .login-btn {
-      width: 100%; padding: 13px; border: none; border-radius: 50px;
-      background: var(--sage); color: #fff; font-family: 'Raleway', sans-serif;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-      cursor: pointer; transition: background var(--t); margin-top: 8px;
-    }
-    .login-btn:hover { background: #88a660; }
-    .login-err { color: var(--red); font-size: 0.74rem; margin-top: 10px; text-align: center; display: none; }
+    /* LOGIN */
+    #login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ink) 0%,#4a4035 100%);z-index:100;}
+    .login-box{background:var(--warm-white);border-radius:22px;padding:52px 48px 44px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,0.4);}
+    .login-mark{text-align:center;margin-bottom:32px;}
+    .login-mark .leaf{font-size:2.2rem;display:block;margin-bottom:8px;}
+    .login-mark h1{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:300;color:var(--ink);}
+    .login-mark h1 strong{font-weight:600;color:var(--sage-dk);}
+    .login-mark p{font-size:0.68rem;color:var(--ink-lt);letter-spacing:0.16em;text-transform:uppercase;margin-top:4px;}
+    .lf{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+    .lf label{font-size:0.7rem;font-weight:700;color:var(--ink-mid);letter-spacing:0.06em;}
+    .pw-wrap{position:relative;}
+    .pw-wrap input{padding-right:42px;}
+    .pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink-lt);font-size:1rem;padding:4px;line-height:1;transition:color var(--t);}
+    .pw-eye:hover{color:var(--sage-dk);}
+    .lf input{padding:10px 14px;border:1.5px solid var(--taupe);border-radius:var(--rad);font-family:'Raleway',sans-serif;font-size:0.84rem;color:var(--ink);background:#fff;outline:none;width:100%;transition:border-color var(--t),box-shadow var(--t);}
+    .lf input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(159,184,122,0.18);}
+    .primary-btn{width:100%;padding:13px;border:none;border-radius:50px;background:var(--sage);color:#fff;font-family:'Raleway',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;transition:all var(--t);margin-top:6px;}
+    .primary-btn:hover{background:var(--sage-dk);transform:translateY(-1px);}
+    .login-err{color:var(--red);font-size:0.72rem;margin-top:10px;text-align:center;min-height:18px;}
 
-    /* ── SHELL ── */
-    #app { display: none; height: 100vh; flex-direction: column; }
-    #app.show { display: flex; }
+    /* SHELL */
+    #app{display:none;height:100vh;flex-direction:column;}
+    #app.show{display:flex;}
+    .topbar{height:56px;background:var(--ink);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;box-shadow:0 2px 16px rgba(0,0,0,0.25);z-index:10;}
+    .topbar-brand{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:#fff;margin-right:auto;display:flex;align-items:center;gap:8px;}
+    .topbar-brand strong{color:var(--sage);}
+    .status-pill{font-size:0.65rem;font-weight:600;letter-spacing:0.1em;padding:4px 10px;border-radius:50px;}
+    .status-pill.ready{background:rgba(159,184,122,0.15);color:var(--sage);}
+    .status-pill.saving{background:rgba(232,184,128,0.2);color:var(--peach-dk);}
+    .status-pill.error{background:rgba(192,57,43,0.15);color:var(--red);}
+    #btn-publish{padding:9px 20px;background:var(--sage);color:#fff;border:none;border-radius:50px;font-family:'Raleway',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all var(--t);}
+    #btn-publish:hover{background:var(--sage-dk);}
+    #btn-publish:disabled{background:var(--taupe-dk);cursor:default;}
+    #btn-logout{padding:7px 14px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.1);border-radius:50px;font-family:'Raleway',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all var(--t);}
+    #btn-logout:hover{background:rgba(255,255,255,0.12);color:#fff;}
 
-    /* Top bar */
-    .topbar {
-      height: 56px; background: var(--ink); display: flex;
-      align-items: center; padding: 0 24px; gap: 16px; flex-shrink: 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-    }
-    .topbar-logo {
-      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 300;
-      color: #fff; margin-right: auto;
-    }
-    .topbar-logo span { color: var(--sage); }
-    .topbar-status { font-size: 0.68rem; color: rgba(255,255,255,0.45); letter-spacing: 0.1em; }
-    .topbar-status.ok { color: rgba(159,184,122,0.8); }
-    .topbar-status.saving { color: var(--peach-dk); }
-    #publish-btn {
-      padding: 9px 22px; background: var(--sage); color: #fff; border: none;
-      border-radius: 50px; font-family: 'Raleway', sans-serif; font-size: 0.7rem;
-      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      cursor: pointer; transition: background var(--t);
-    }
-    #publish-btn:hover { background: #88a660; }
-    #publish-btn:disabled { background: var(--taupe-dk); cursor: default; }
-    #logout-btn {
-      padding: 7px 14px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 50px;
-      font-family: 'Raleway', sans-serif; font-size: 0.66rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
-      transition: all var(--t);
-    }
-    #logout-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    /* LAYOUT */
+    .shell{display:flex;flex:1;overflow:hidden;}
+    .sidebar{width:210px;background:var(--warm-white);flex-shrink:0;border-right:1px solid var(--cream-3);display:flex;flex-direction:column;overflow-y:auto;}
+    .sb-label{padding:20px 18px 6px;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--taupe-dk);}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;border:none;background:none;width:100%;cursor:pointer;font-family:'Raleway',sans-serif;font-size:0.78rem;font-weight:500;color:var(--ink-mid);text-align:left;transition:all var(--t);position:relative;}
+    .nav-item:hover{background:var(--cream-2);color:var(--ink);}
+    .nav-item.active{background:linear-gradient(90deg,rgba(159,184,122,0.15),transparent);color:var(--ink);font-weight:700;}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--sage);border-radius:0 3px 3px 0;}
+    .nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+    .sb-spacer{flex:1;}
+    .sb-foot{padding:14px 18px;border-top:1px solid var(--cream-3);font-size:0.65rem;color:var(--ink-lt);line-height:1.7;}
+    .main{flex:1;overflow-y:auto;padding:32px 36px 48px;}
+    .panel{display:none;}
+    .panel.active{display:block;}
+    .panel-hd{margin-bottom:28px;}
+    .panel-hd h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ink);line-height:1.1;}
+    .panel-hd h2 em{font-style:italic;color:var(--taupe-dk);}
+    .panel-hd p{font-size:0.81rem;font-weight:300;color:var(--ink-mid);margin-top:6px;line-height:1.7;}
 
-    /* Main layout */
-    .main { display: flex; flex: 1; overflow: hidden; }
+    /* CARDS */
+    .card{background:var(--warm-white);border-radius:var(--rad-lg);padding:24px 26px;margin-bottom:18px;box-shadow:var(--sh);}
+    .card-hd{font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--sage-dk);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--cream-3);display:flex;align-items:center;gap:7px;}
+    .sub{background:var(--cream-2);border-radius:var(--rad);padding:16px 18px;margin-bottom:12px;}
+    .sub-title{font-size:0.6rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--taupe-dk);margin-bottom:12px;}
 
-    /* Sidebar */
-    .sidebar {
-      width: 200px; background: var(--warm-white); border-right: 1px solid var(--cream-3);
-      flex-shrink: 0; padding: 24px 0; overflow-y: auto;
-    }
-    .sidebar-section { padding: 0 16px 8px; font-size: 0.6rem; font-weight: 700;
-      letter-spacing: 0.18em; text-transform: uppercase; color: var(--taupe-dk); margin-top: 16px; }
-    .nav-btn {
-      display: flex; align-items: center; gap: 9px; padding: 9px 20px;
-      width: 100%; border: none; background: none; cursor: pointer;
-      font-family: 'Raleway', sans-serif; font-size: 0.78rem; font-weight: 500;
-      color: var(--ink-mid); text-align: left; transition: all var(--t); border-radius: 0;
-    }
-    .nav-btn:hover { background: var(--cream-2); color: var(--ink); }
-    .nav-btn.active { background: var(--sage-lt); color: var(--ink); font-weight: 700; }
-    .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+    /* FORM */
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+    .f{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+    .f:last-child{margin-bottom:0;}
+    .f label{font-size:0.67rem;font-weight:700;color:var(--ink-mid);letter-spacing:0.05em;}
+    .f small{font-size:0.63rem;color:var(--ink-lt);line-height:1.5;}
+    .f input,.f textarea,.f select{padding:9px 12px;border:1.5px solid var(--taupe);border-radius:var(--rad);font-family:'Raleway',sans-serif;font-size:0.82rem;color:var(--ink);background:#fff;outline:none;width:100%;transition:border-color var(--t),box-shadow var(--t);}
+    .f input:focus,.f textarea:focus,.f select:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(159,184,122,0.15);}
+    .f textarea{resize:vertical;min-height:76px;line-height:1.65;}
+    .pw-row{position:relative;}
+    .pw-row input{padding-right:44px !important;}
+    .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink-lt);font-size:0.95rem;padding:4px;line-height:1;transition:color var(--t);}
+    .eye:hover{color:var(--sage-dk);}
 
-    /* Content area */
-    .content { flex: 1; overflow-y: auto; padding: 32px 36px; }
-    .panel { display: none; }
-    .panel.active { display: block; }
-    .panel-title {
-      font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300;
-      color: var(--ink); margin-bottom: 6px; line-height: 1.1;
-    }
-    .panel-title em { font-style: italic; color: var(--taupe-dk); }
-    .panel-lead { font-size: 0.82rem; font-weight: 300; color: var(--ink-mid); margin-bottom: 28px; line-height: 1.7; }
+    /* INFO */
+    .info{border-radius:var(--rad);padding:14px 16px;margin-bottom:14px;border-left:3px solid var(--sage);background:var(--cream-2);}
+    .info.warn{border-color:var(--peach-dk);}
+    .info.tip{border-color:var(--taupe-dk);}
+    .info p{font-size:0.75rem;font-weight:300;line-height:1.7;color:var(--ink-mid);}
+    .info p+p{margin-top:7px;}
+    .info strong{font-weight:700;color:var(--ink);}
+    .info code{background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;font-size:0.8em;font-family:monospace;}
+    .info ol,.info ul{padding-left:18px;margin-top:8px;}
+    .info li{font-size:0.73rem;color:var(--ink-mid);margin-bottom:4px;line-height:1.6;}
 
-    /* Cards */
-    .card {
-      background: var(--warm-white); border-radius: 14px; padding: 24px 26px;
-      margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    }
-    .card-title {
-      font-size: 0.64rem; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--sage); margin-bottom: 18px;
-      padding-bottom: 10px; border-bottom: 1px solid var(--cream-3);
-      display: flex; align-items: center; gap: 7px;
-    }
+    /* IMAGES */
+    .img-zone{border:2px dashed var(--taupe);border-radius:var(--rad);padding:22px;text-align:center;cursor:pointer;transition:all var(--t);background:#fff;position:relative;overflow:hidden;}
+    .img-zone:hover{border-color:var(--sage);background:rgba(159,184,122,0.04);}
+    .img-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .img-zone-icon{font-size:1.8rem;margin-bottom:7px;}
+    .img-zone-label{font-size:0.74rem;font-weight:600;color:var(--ink-mid);}
+    .img-zone-hint{font-size:0.64rem;color:var(--ink-lt);margin-top:3px;}
+    .img-preview{width:100%;max-height:150px;object-fit:contain;border-radius:var(--rad);margin-top:12px;display:none;border:1px solid var(--cream-3);}
+    .img-preview.show{display:block;}
+    .img-clear{margin-top:8px;padding:5px 14px;border:1px solid var(--taupe-dk);border-radius:50px;background:none;color:var(--ink-lt);font-family:'Raleway',sans-serif;font-size:0.66rem;font-weight:600;cursor:pointer;display:none;transition:all var(--t);}
+    .img-clear.show{display:inline-flex;}
+    .img-clear:hover{border-color:var(--red);color:var(--red);}
 
-    /* Form fields */
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .field-row.single { grid-template-columns: 1fr; }
-    .field-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
-    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-    .field label { font-size: 0.68rem; font-weight: 700; color: var(--ink-mid); letter-spacing: 0.05em; }
-    .field .desc { font-size: 0.64rem; color: var(--ink-lt); }
-    .field input, .field textarea, .field select {
-      padding: 9px 12px; border: 1.5px solid var(--taupe); border-radius: 8px;
-      font-family: 'Raleway', sans-serif; font-size: 0.82rem; color: var(--ink);
-      background: #fff; outline: none; width: 100%;
-      transition: border-color var(--t);
-    }
-    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--sage); }
-    .field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+    /* API */
+    .api-row{display:flex;gap:10px;align-items:flex-end;}
+    .api-row .f{flex:1;margin-bottom:0;}
+    .test-btn{padding:10px 18px;border:1.5px solid var(--sage);border-radius:var(--rad);background:none;color:var(--sage-dk);font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;white-space:nowrap;transition:all var(--t);height:40px;flex-shrink:0;}
+    .test-btn:hover{background:var(--sage);color:#fff;}
+    .api-pill{display:inline-flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:600;padding:5px 12px;border-radius:50px;margin-top:8px;}
+    .api-pill.ok{background:rgba(39,174,96,0.12);color:var(--green);}
+    .api-pill.err{background:rgba(192,57,43,0.1);color:var(--red);}
+    .api-pill.wait{background:var(--cream-3);color:var(--ink-mid);}
 
-    /* Info box */
-    .info-box {
-      background: var(--cream-2); border-radius: 10px; padding: 16px 18px;
-      border-left: 3px solid var(--sage); margin-bottom: 16px;
-    }
-    .info-box p { font-size: 0.76rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid); }
-    .info-box strong { font-weight: 700; color: var(--ink); }
-    .info-box.warn { border-color: var(--peach-dk); }
-    .info-box ol, .info-box ul { padding-left: 18px; margin-top: 8px; }
-    .info-box li { font-size: 0.74rem; color: var(--ink-mid); margin-bottom: 5px; line-height: 1.6; }
-    .info-box code {
-      background: rgba(0,0,0,0.07); padding: 1px 5px; border-radius: 3px;
-      font-family: monospace; font-size: 0.8em; color: var(--ink);
-    }
+    /* QUICK REPLIES */
+    .qr-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+    .qr-row{display:grid;grid-template-columns:1fr 2fr 32px;gap:8px;align-items:center;}
+    .qr-del{width:28px;height:28px;border-radius:50%;background:none;border:1.5px solid var(--taupe-dk);color:var(--ink-lt);cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;transition:all var(--t);flex-shrink:0;}
+    .qr-del:hover{background:var(--red);border-color:var(--red);color:#fff;}
+    .ghost-btn{padding:7px 16px;border:1.5px dashed var(--taupe);border-radius:50px;background:none;color:var(--ink-lt);font-family:'Raleway',sans-serif;font-size:0.68rem;font-weight:600;letter-spacing:0.08em;cursor:pointer;transition:all var(--t);}
+    .ghost-btn:hover{border-color:var(--sage);color:var(--sage-dk);}
+    .save-row{display:flex;justify-content:flex-end;margin-top:12px;}
+    .save-btn{padding:11px 28px;background:var(--sage);color:#fff;border:none;border-radius:50px;font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background var(--t);}
+    .save-btn:hover{background:var(--sage-dk);}
 
-    /* Toast */
-    #toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px);
-      background: var(--ink); color: #fff; padding: 12px 24px; border-radius: 50px;
-      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.22); opacity: 0; pointer-events: none;
-      transition: all 0.3s ease; z-index: 999; display: flex; align-items: center; gap: 8px;
-      border-top: 3px solid var(--sage); white-space: nowrap;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.error { border-color: var(--red); }
-    #toast.success { border-color: var(--sage); }
+    /* TOAST */
+    #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:50px;font-size:0.76rem;font-weight:600;letter-spacing:0.04em;box-shadow:0 8px 32px rgba(0,0,0,0.25);opacity:0;pointer-events:none;transition:all 0.28s cubic-bezier(.34,1.56,.64,1);z-index:9999;display:flex;align-items:center;gap:8px;white-space:nowrap;border-top:2.5px solid var(--sage);}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    #toast.err{border-color:var(--red);}
 
-    /* Chat quick replies editor */
-    .qr-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    .qr-item { display: grid; grid-template-columns: 1fr 2fr 32px; gap: 8px; align-items: center; }
-    .qr-item input { margin-bottom: 0; }
-    .qr-remove {
-      width: 28px; height: 28px; border-radius: 50%; background: none;
-      border: 1.5px solid var(--taupe-dk); color: var(--ink-lt); cursor: pointer;
-      font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
-      transition: all var(--t);
-    }
-    .qr-remove:hover { background: var(--red); border-color: var(--red); color: #fff; }
-    .add-btn {
-      padding: 7px 16px; background: none; border: 1.5px dashed var(--taupe);
-      border-radius: 50px; color: var(--ink-lt); cursor: pointer;
-      font-family: 'Raleway', sans-serif; font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.08em; transition: all var(--t);
-    }
-    .add-btn:hover { border-color: var(--sage); color: var(--sage); background: var(--sage-lt); }
-
-    @media(max-width: 768px) {
-      .sidebar { width: 56px; }
-      .sidebar-section, .nav-btn span { display: none; }
-      .nav-btn { justify-content: center; padding: 12px; }
-      .field-row, .field-row.thirds { grid-template-columns: 1fr; }
-      .content { padding: 20px 16px; }
+    @media(max-width:720px){
+      .sidebar{width:52px;}
+      .sb-label,.nav-item span,.sb-foot{display:none;}
+      .nav-item{justify-content:center;padding:12px 0;}
+      .nav-item.active::before{display:none;}
+      .main{padding:18px 14px 40px;}
+      .g2,.g3{grid-template-columns:1fr;}
     }
   </style>
 </head>
 <body>
 
-<!-- ── LOGIN ── -->
+<!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">🌿 <span>Peques</span> Admin</div>
-    <p class="login-sub">Site Management Dashboard</p>
-    <div class="login-field">
-      <label>Admin Password</label>
-      <input type="password" id="admin-pw" placeholder="Enter password…" autocomplete="current-password" />
+  <div class="login-box">
+    <div class="login-mark">
+      <span class="leaf">🌿</span>
+      <h1><strong>Peques</strong> Admin</h1>
+      <p>Site Management Dashboard</p>
     </div>
-    <div class="login-field">
-      <label>GitHub Personal Access Token</label>
-      <input type="password" id="gh-token" placeholder="ghp_…" autocomplete="off" />
-      <span class="hint">Needs <strong>contents:write</strong> scope. <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--sage)">Create one →</a></span>
+    <div class="lf">
+      <label>Username</label>
+      <input type="text" id="l-user" placeholder="admin" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()" />
     </div>
-    <div class="login-field">
-      <label>Repository (owner/repo)</label>
-      <input type="text" id="gh-repo" placeholder="e.g. Margarita4168/peques-landing" />
+    <div class="lf">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="l-pw" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+        <button class="pw-eye" type="button" onclick="togglePw('l-pw',this)">👁</button>
+      </div>
     </div>
-    <div class="login-field">
-      <label>Branch</label>
-      <input type="text" id="gh-branch" value="main" />
-    </div>
-    <button class="login-btn" onclick="doLogin()">Sign in →</button>
-    <div class="login-err" id="login-err"></div>
+    <button class="primary-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-err" id="l-err"></div>
   </div>
 </div>
 
-<!-- ── APP ── -->
+<!-- APP -->
 <div id="app">
   <div class="topbar">
-    <div class="topbar-logo">🌿 <span>Peques</span> Admin</div>
-    <div class="topbar-status" id="status-label">Ready</div>
-    <button id="publish-btn" onclick="publishAll()">↑ Publish Changes</button>
-    <button id="logout-btn" onclick="doLogout()">Sign out</button>
+    <div class="topbar-brand">🌿 <strong>Peques</strong> Admin</div>
+    <div class="status-pill ready" id="top-status">Ready</div>
+    <button id="btn-publish" onclick="publishAll()">↑ Publish to site</button>
+    <button id="btn-logout" onclick="doLogout()">Sign out</button>
   </div>
 
-  <div class="main">
-    <!-- Sidebar -->
+  <div class="shell">
     <div class="sidebar">
-      <div class="sidebar-section">Pages</div>
-      <button class="nav-btn active" onclick="showPanel('landing')">
-        <span class="nav-icon">🏠</span><span>Landing Page</span>
-      </button>
-      <button class="nav-btn" onclick="showPanel('careers')">
-        <span class="nav-icon">💼</span><span>Careers</span>
-      </button>
-      <div class="sidebar-section">Tools</div>
-      <button class="nav-btn" onclick="showPanel('chat')">
-        <span class="nav-icon">💬</span><span>Chat Assistant</span>
-      </button>
-      <button class="nav-btn" onclick="showPanel('github')">
-        <span class="nav-icon">⚙️</span><span>GitHub Settings</span>
-      </button>
+      <div class="sb-label">Pages</div>
+      <button class="nav-item active" data-panel="landing" onclick="nav(this)"><span class="nav-icon">🏠</span><span>Landing Page</span></button>
+      <button class="nav-item" data-panel="careers" onclick="nav(this)"><span class="nav-icon">💼</span><span>Careers Page</span></button>
+      <button class="nav-item" data-panel="images" onclick="nav(this)"><span class="nav-icon">🖼</span><span>Images</span></button>
+      <div class="sb-label">Chat & AI</div>
+      <button class="nav-item" data-panel="api" onclick="nav(this)"><span class="nav-icon">🔑</span><span>API & Connection</span></button>
+      <button class="nav-item" data-panel="chat" onclick="nav(this)"><span class="nav-icon">💬</span><span>Chat Config</span></button>
+      <div class="sb-label">Admin</div>
+      <button class="nav-item" data-panel="settings" onclick="nav(this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+      <div class="sb-spacer"></div>
+      <div class="sb-foot">peques.co.uk<br/>Publish → Vercel<br/>Live in ~30 seconds</div>
     </div>
 
-    <!-- Content -->
-    <div class="content">
+    <div class="main">
 
-      <!-- ── LANDING PAGE ── -->
+      <!-- LANDING PAGE -->
       <div class="panel active" id="panel-landing">
-        <div class="panel-title">Landing Page <em>Content</em></div>
-        <p class="panel-lead">Edit text displayed on peques.co.uk. Changes are published to GitHub and go live on Vercel within ~30 seconds of clicking Publish.</p>
-
+        <div class="panel-hd"><h2>Landing Page <em>Content</em></h2><p>Edit text on the main peques.co.uk page. Press <strong>↑ Publish</strong> when ready.</p></div>
         <div class="card">
-          <div class="card-title">📝 Hero Section</div>
-          <div class="field field-row single">
-            <label>Subtitle</label>
-            <textarea id="hero.subtitle" rows="3"></textarea>
+          <div class="card-hd">📝 Hero — Subtitle &amp; Stats</div>
+          <div class="f"><label>Subtitle</label><textarea id="hero.subtitle" rows="3"></textarea></div>
+          <div class="g3">
+            <div class="f"><label>Stat 1 — number</label><input id="hero.stat1_num" /></div>
+            <div class="f"><label>Stat 1 — label</label><input id="hero.stat1_label" /></div>
           </div>
-          <div class="field-row thirds">
-            <div class="field">
-              <label>Stat 1 — Number</label>
-              <input type="text" id="hero.stat1_num" />
-            </div>
-            <div class="field">
-              <label>Stat 1 — Label</label>
-              <input type="text" id="hero.stat1_label" />
-            </div>
+          <div class="g3">
+            <div class="f"><label>Stat 2 — number</label><input id="hero.stat2_num" /></div>
+            <div class="f"><label>Stat 2 — label</label><input id="hero.stat2_label" /></div>
           </div>
-          <div class="field-row thirds">
-            <div class="field">
-              <label>Stat 2 — Number</label>
-              <input type="text" id="hero.stat2_num" />
-            </div>
-            <div class="field">
-              <label>Stat 2 — Label</label>
-              <input type="text" id="hero.stat2_label" />
-            </div>
-          </div>
-          <div class="field-row thirds">
-            <div class="field">
-              <label>Stat 3 — Number</label>
-              <input type="text" id="hero.stat3_num" />
-            </div>
-            <div class="field">
-              <label>Stat 3 — Label</label>
-              <input type="text" id="hero.stat3_label" />
-            </div>
+          <div class="g3">
+            <div class="f"><label>Stat 3 — number</label><input id="hero.stat3_num" /></div>
+            <div class="f"><label>Stat 3 — label</label><input id="hero.stat3_label" /></div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-title">🏫 Fulham Broadway (PFB)</div>
-          <div class="field">
-            <label>Setting Name</label>
-            <input type="text" id="pfb.name" />
+          <div class="card-hd">🏫 Fulham Broadway (PFB)</div>
+          <div class="f"><label>Setting name</label><input id="pfb.name" /></div>
+          <div class="f"><label>Description</label><textarea id="pfb.desc" rows="2"></textarea></div>
+          <div class="g2"><div class="f"><label>Address</label><input id="pfb.address" /></div><div class="f"><label>Phone</label><input id="pfb.phone" /></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">🌿 Parsons Green (PPG)</div>
+          <div class="f"><label>Setting name</label><input id="ppg.name" /></div>
+          <div class="f"><label>Description</label><textarea id="ppg.desc" rows="2"></textarea></div>
+          <div class="g2"><div class="f"><label>Address</label><input id="ppg.address" /></div><div class="f"><label>Phone</label><input id="ppg.phone" /></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">💬 Testimonials</div>
+          <div class="sub"><div class="sub-title">Testimonial 1</div>
+            <div class="f"><label>Quote</label><textarea id="t1.text" rows="3"></textarea></div>
+            <div class="g3"><div class="f"><label>Initial (avatar)</label><input id="t1.initial" maxlength="2" /></div><div class="f"><label>Name</label><input id="t1.name" /></div><div class="f"><label>Role / Setting</label><input id="t1.role" /></div></div>
           </div>
-          <div class="field">
-            <label>Description</label>
-            <textarea id="pfb.desc" rows="2"></textarea>
+          <div class="sub"><div class="sub-title">Testimonial 2</div>
+            <div class="f"><label>Quote</label><textarea id="t2.text" rows="3"></textarea></div>
+            <div class="g3"><div class="f"><label>Initial</label><input id="t2.initial" maxlength="2" /></div><div class="f"><label>Name</label><input id="t2.name" /></div><div class="f"><label>Role / Setting</label><input id="t2.role" /></div></div>
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Address</label>
-              <input type="text" id="pfb.address" />
-            </div>
-            <div class="field">
-              <label>Phone</label>
-              <input type="text" id="pfb.phone" />
-            </div>
+          <div class="sub"><div class="sub-title">Testimonial 3</div>
+            <div class="f"><label>Quote</label><textarea id="t3.text" rows="3"></textarea></div>
+            <div class="g3"><div class="f"><label>Initial</label><input id="t3.initial" maxlength="2" /></div><div class="f"><label>Name</label><input id="t3.name" /></div><div class="f"><label>Role / Setting</label><input id="t3.role" /></div></div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-title">🌿 Parsons Green (PPG)</div>
-          <div class="field">
-            <label>Setting Name</label>
-            <input type="text" id="ppg.name" />
-          </div>
-          <div class="field">
-            <label>Description</label>
-            <textarea id="ppg.desc" rows="2"></textarea>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Address</label>
-              <input type="text" id="ppg.address" />
-            </div>
-            <div class="field">
-              <label>Phone</label>
-              <input type="text" id="ppg.phone" />
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">💬 Testimonials</div>
-          <!-- T1 -->
-          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 1</div>
-            <div class="field">
-              <label>Quote</label>
-              <textarea id="t1.text" rows="3"></textarea>
-            </div>
-            <div class="field-row thirds">
-              <div class="field">
-                <label>Initial (avatar)</label>
-                <input type="text" id="t1.initial" maxlength="2" style="text-transform:uppercase" />
-              </div>
-              <div class="field">
-                <label>Name</label>
-                <input type="text" id="t1.name" />
-              </div>
-              <div class="field">
-                <label>Role / Setting</label>
-                <input type="text" id="t1.role" />
-              </div>
-            </div>
-          </div>
-          <!-- T2 -->
-          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;margin-bottom:14px;">
-            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 2</div>
-            <div class="field">
-              <label>Quote</label>
-              <textarea id="t2.text" rows="3"></textarea>
-            </div>
-            <div class="field-row thirds">
-              <div class="field">
-                <label>Initial</label>
-                <input type="text" id="t2.initial" maxlength="2" style="text-transform:uppercase" />
-              </div>
-              <div class="field">
-                <label>Name</label>
-                <input type="text" id="t2.name" />
-              </div>
-              <div class="field">
-                <label>Role / Setting</label>
-                <input type="text" id="t2.role" />
-              </div>
-            </div>
-          </div>
-          <!-- T3 -->
-          <div style="background:var(--cream-2);border-radius:10px;padding:16px 18px;">
-            <div style="font-size:0.64rem;font-weight:700;color:var(--taupe-dk);letter-spacing:0.12em;margin-bottom:12px;">TESTIMONIAL 3</div>
-            <div class="field">
-              <label>Quote</label>
-              <textarea id="t3.text" rows="3"></textarea>
-            </div>
-            <div class="field-row thirds">
-              <div class="field">
-                <label>Initial</label>
-                <input type="text" id="t3.initial" maxlength="2" style="text-transform:uppercase" />
-              </div>
-              <div class="field">
-                <label>Name</label>
-                <input type="text" id="t3.name" />
-              </div>
-              <div class="field">
-                <label>Role / Setting</label>
-                <input type="text" id="t3.role" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📣 CTA Banner</div>
-          <div class="field">
-            <label>Title</label>
-            <input type="text" id="cta.title" />
-          </div>
-          <div class="field">
-            <label>Subtitle</label>
-            <textarea id="cta.subtitle" rows="2"></textarea>
-          </div>
+          <div class="card-hd">📣 CTA Banner</div>
+          <div class="f"><label>Title</label><input id="cta.title" /></div>
+          <div class="f"><label>Subtitle</label><textarea id="cta.subtitle" rows="2"></textarea></div>
         </div>
       </div>
 
-      <!-- ── CAREERS ── -->
+      <!-- CAREERS PAGE -->
       <div class="panel" id="panel-careers">
-        <div class="panel-title">Careers <em>Page</em></div>
-        <p class="panel-lead">The careers page (careers.html) is managed separately in GitHub. Use this panel for quick reference.</p>
-        <div class="info-box">
-          <p>To edit the <strong>Careers page</strong> content (roles, form, text), open <code>careers.html</code> directly in GitHub and edit the HTML. The file is clearly commented — search for the section you want to update.</p>
-          <ol>
-            <li>Go to your GitHub repository</li>
-            <li>Click on <code>careers.html</code></li>
-            <li>Click the pencil icon ✏️ to edit</li>
-            <li>Search for the text you want to change (Ctrl+F in the editor)</li>
-            <li>Commit the change — Vercel redeploys automatically</li>
-          </ol>
+        <div class="panel-hd"><h2>Careers Page <em>Content</em></h2><p>Edit text on peques.co.uk/careers.</p></div>
+        <div class="card">
+          <div class="card-hd">📝 Hero</div>
+          <div class="f"><label>Intro paragraph</label><textarea id="cr.hero_lead" rows="3"></textarea></div>
         </div>
-        <div class="info-box warn">
-          <p><strong>Formspree email routing:</strong> To change where application forms are sent, find <code>careers@peques.co.uk</code> in the Formspree dashboard and update the notification email there — no code change needed.</p>
+        <div class="card">
+          <div class="card-hd">✨ Why Peques — Value Cards</div>
+          <div class="sub"><div class="sub-title">Card 1</div><div class="g2"><div class="f"><label>Title</label><input id="cr.v1_title" /></div><div class="f"><label>Text</label><input id="cr.v1_text" /></div></div></div>
+          <div class="sub"><div class="sub-title">Card 2</div><div class="g2"><div class="f"><label>Title</label><input id="cr.v2_title" /></div><div class="f"><label>Text</label><input id="cr.v2_text" /></div></div></div>
+          <div class="sub"><div class="sub-title">Card 3</div><div class="g2"><div class="f"><label>Title</label><input id="cr.v3_title" /></div><div class="f"><label>Text</label><input id="cr.v3_text" /></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">💼 Current Roles</div>
+          <div class="sub"><div class="sub-title">Role 1</div><div class="f"><label>Title</label><input id="cr.r1_title" /></div><div class="f"><label>Description</label><textarea id="cr.r1_desc" rows="3"></textarea></div></div>
+          <div class="sub"><div class="sub-title">Role 2</div><div class="f"><label>Title</label><input id="cr.r2_title" /></div><div class="f"><label>Description</label><textarea id="cr.r2_desc" rows="3"></textarea></div></div>
+          <div class="sub"><div class="sub-title">Role 3</div><div class="f"><label>Title</label><input id="cr.r3_title" /></div><div class="f"><label>Description</label><textarea id="cr.r3_desc" rows="3"></textarea></div></div>
         </div>
       </div>
 
-      <!-- ── CHAT ASSISTANT ── -->
-      <div class="panel" id="panel-chat">
-        <div class="panel-title">Chat <em>Assistant</em></div>
-        <p class="panel-lead">Configure the AI chat widget that appears on the landing page. Changes to the system prompt take effect on next publish.</p>
-
+      <!-- IMAGES -->
+      <div class="panel" id="panel-images">
+        <div class="panel-hd"><h2>Images</h2><p>Upload images — stored in <code>content.json</code>, applied site-wide automatically. Max <strong>500 KB</strong> per image.</p></div>
         <div class="card">
-          <div class="card-title">🔑 OpenAI API Key</div>
-          <div class="info-box">
-            <p>The API key is stored securely as a <strong>Vercel environment variable</strong> — it never appears in the code. To update it:</p>
+          <div class="card-hd">🌿 Logo</div>
+          <div class="info tip"><p>Transparent PNG recommended. Appears on both landing and careers pages.</p></div>
+          <div class="img-zone" onclick="document.getElementById('img-logo').click()">
+            <input type="file" id="img-logo" accept="image/*" onchange="handleImg('logo',this,'prev-logo','clr-logo')" />
+            <div class="img-zone-icon">🖼</div>
+            <div class="img-zone-label">Click to upload logo</div>
+            <div class="img-zone-hint">PNG · SVG · transparent preferred</div>
+            <img id="prev-logo" class="img-preview" alt="Logo preview" />
+          </div>
+          <button id="clr-logo" class="img-clear" onclick="clearImg('images.logo','prev-logo','clr-logo')">✕ Remove logo</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">🏫 Fulham Broadway — Setting Photo</div>
+          <div class="info tip"><p>Landscape photo for the PFB card. JPG or WebP, under 500 KB.</p></div>
+          <div class="img-zone" onclick="document.getElementById('img-pfb').click()">
+            <input type="file" id="img-pfb" accept="image/*" onchange="handleImg('pfb',this,'prev-pfb','clr-pfb')" />
+            <div class="img-zone-icon">📷</div>
+            <div class="img-zone-label">Click to upload PFB photo</div>
+            <div class="img-zone-hint">JPG · WebP · landscape</div>
+            <img id="prev-pfb" class="img-preview" alt="PFB preview" />
+          </div>
+          <button id="clr-pfb" class="img-clear" onclick="clearImg('images.pfb_photo','prev-pfb','clr-pfb')">✕ Remove photo</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">🌿 Parsons Green — Setting Photo</div>
+          <div class="info tip"><p>Landscape photo for the PPG card. JPG or WebP, under 500 KB.</p></div>
+          <div class="img-zone" onclick="document.getElementById('img-ppg').click()">
+            <input type="file" id="img-ppg" accept="image/*" onchange="handleImg('ppg',this,'prev-ppg','clr-ppg')" />
+            <div class="img-zone-icon">📷</div>
+            <div class="img-zone-label">Click to upload PPG photo</div>
+            <div class="img-zone-hint">JPG · WebP · landscape</div>
+            <img id="prev-ppg" class="img-preview" alt="PPG preview" />
+          </div>
+          <button id="clr-ppg" class="img-clear" onclick="clearImg('images.ppg_photo','prev-ppg','clr-ppg')">✕ Remove photo</button>
+        </div>
+      </div>
+
+      <!-- API & CONNECTION -->
+      <div class="panel" id="panel-api">
+        <div class="panel-hd"><h2>API &amp; <em>Connection</em></h2><p>Configure the AI chat assistant and your GitHub publish connection.</p></div>
+        <div class="card">
+          <div class="card-hd">🤖 OpenAI — Chat Assistant</div>
+          <div class="info"><p>Your API key powers the chat widget. It is written securely into <code>api/chat.js</code> on publish — never exposed to visitors.</p></div>
+          <div class="api-row">
+            <div class="f">
+              <label>OpenAI API Key</label>
+              <div class="pw-row">
+                <input type="password" id="openai-key" placeholder="sk-proj-…" autocomplete="off" />
+                <button class="eye" type="button" onclick="togglePw('openai-key',this)">👁</button>
+              </div>
+            </div>
+            <button class="test-btn" onclick="testOpenAI()">Test connection</button>
+          </div>
+          <div id="api-status-box"></div>
+          <div class="info warn" style="margin-top:12px;">
+            <p><strong>How to get an API key:</strong></p>
             <ol>
-              <li>Go to <strong>vercel.com</strong> → your project → <strong>Settings → Environment Variables</strong></li>
-              <li>Find <code>OPENAI_API_KEY</code> and click Edit</li>
-              <li>Paste your new key (from <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--sage)">platform.openai.com/api-keys</a>)</li>
-              <li>Save, then go to Deployments and click <strong>Redeploy</strong></li>
+              <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></li>
+              <li>Click <strong>Create new secret key</strong></li>
+              <li>Copy and paste it above, then click <strong>↑ Publish to site</strong></li>
             </ol>
           </div>
-          <div class="field-row">
-            <div class="field">
-              <label>OpenAI Model</label>
-              <select id="chat.openai_model">
-                <option value="gpt-4o-mini">gpt-4o-mini (fast, affordable — recommended)</option>
-                <option value="gpt-4o">gpt-4o (more capable, higher cost)</option>
-                <option value="gpt-4-turbo">gpt-4-turbo</option>
-              </select>
-              <span class="desc">Model is set in api/chat.js and updated on publish.</span>
+          <div class="f" style="margin-top:14px;">
+            <label>OpenAI Model</label>
+            <select id="chat.openai_model">
+              <option value="gpt-4o-mini">gpt-4o-mini — fast, affordable (recommended)</option>
+              <option value="gpt-4o">gpt-4o — most capable</option>
+              <option value="gpt-4-turbo">gpt-4-turbo</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd">🐙 GitHub — Publish Connection</div>
+          <div class="info"><p>Changes are committed to GitHub; Vercel redeploys automatically in ~30 seconds.</p></div>
+          <div class="f">
+            <label>Personal Access Token</label>
+            <div class="pw-row">
+              <input type="password" id="s-token" placeholder="ghp_…" autocomplete="off" />
+              <button class="eye" type="button" onclick="togglePw('s-token',this)">👁</button>
+            </div>
+            <small>Needs <strong>Contents → Read &amp; Write</strong> scope. <a href="https://github.com/settings/tokens/new" target="_blank">Create one →</a></small>
+          </div>
+          <div class="g2">
+            <div class="f"><label>Repository (owner/repo)</label><input type="text" id="s-repo" placeholder="Margarita4168/peques-landing" /></div>
+            <div class="f"><label>Branch</label><input type="text" id="s-branch" value="main" /></div>
+          </div>
+          <div class="save-row"><button class="save-btn" onclick="saveGH()">Save &amp; connect</button></div>
+        </div>
+      </div>
+
+      <!-- CHAT CONFIG -->
+      <div class="panel" id="panel-chat">
+        <div class="panel-hd"><h2>Chat <em>Assistant</em></h2><p>Configure how the AI talks to visitors. API key is set in API &amp; Connection.</p></div>
+        <div class="card">
+          <div class="card-hd">💬 Welcome Message</div>
+          <div class="f"><label>First message shown to visitors</label><textarea id="chat.welcome" rows="3"></textarea></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">⚡ Quick Reply Buttons</div>
+          <small style="color:var(--ink-lt);font-size:0.67rem;display:block;margin-bottom:12px;">Label shown on button · Message sent to AI when clicked</small>
+          <div id="qr-grid" class="qr-grid"></div>
+          <button class="ghost-btn" onclick="addQR()">+ Add button</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">🧠 AI System Prompt</div>
+          <div class="info"><p>Instructions given to the AI before every conversation. Defines what it knows about Peques and how it responds. Keep it accurate and up to date.</p></div>
+          <div class="f"><textarea id="chat.system_prompt" rows="22" style="font-family:monospace;font-size:0.76rem;line-height:1.65;"></textarea></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="panel" id="panel-settings">
+        <div class="panel-hd"><h2>Admin <em>Settings</em></h2><p>Update your login credentials.</p></div>
+        <div class="card">
+          <div class="card-hd">🔐 Login Credentials</div>
+          <div class="g2">
+            <div class="f"><label>Username</label><input type="text" id="s-user" /></div>
+            <div class="f">
+              <label>New Password</label>
+              <div class="pw-row">
+                <input type="password" id="s-pw" placeholder="Leave blank to keep current" />
+                <button class="eye" type="button" onclick="togglePw('s-pw',this)">👁</button>
+              </div>
             </div>
           </div>
+          <div class="save-row"><button class="save-btn" onclick="saveCreds()">Save credentials</button></div>
         </div>
-
         <div class="card">
-          <div class="card-title">💬 Chat Behaviour</div>
-          <div class="field">
-            <label>Welcome Message</label>
-            <textarea id="chat.welcome" rows="3"></textarea>
-            <span class="desc">The first message shown when a visitor opens the chat.</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">⚡ Quick Reply Buttons</div>
-          <div id="qr-list" class="qr-list"></div>
-          <button class="add-btn" onclick="addQR()">+ Add quick reply</button>
-        </div>
-
-        <div class="card">
-          <div class="card-title">🧠 AI System Prompt</div>
-          <div class="info-box">
-            <p>This is the instruction given to the AI before every conversation. It defines what the assistant knows about Peques and how it should respond. Keep it accurate and up to date.</p>
-          </div>
-          <div class="field field-row single">
-            <textarea id="chat.system_prompt" rows="24" style="font-family:monospace;font-size:0.78rem;line-height:1.6;"></textarea>
+          <div class="card-hd">ℹ️ How publishing works</div>
+          <div class="info">
+            <p><strong>↑ Publish to site</strong> commits two files to GitHub:</p>
+            <ul><li><code>content.json</code> — all text content and images</li><li><code>api/chat.js</code> — system prompt, model, API key</li></ul>
+            <p>Vercel detects the commit and redeploys in ~30 seconds automatically.</p>
           </div>
         </div>
       </div>
 
-      <!-- ── GITHUB SETTINGS ── -->
-      <div class="panel" id="panel-github">
-        <div class="panel-title">GitHub <em>Settings</em></div>
-        <p class="panel-lead">Update your GitHub connection. Changes apply immediately — no publish needed.</p>
-        <div class="card">
-          <div class="card-title">⚙️ Connection</div>
-          <div class="field">
-            <label>Personal Access Token</label>
-            <input type="password" id="s-gh-token" />
-            <span class="desc">Needs <strong>contents:write</strong> scope.</span>
-          </div>
-          <div class="field">
-            <label>Repository (owner/name)</label>
-            <input type="text" id="s-gh-repo" />
-          </div>
-          <div class="field">
-            <label>Branch</label>
-            <input type="text" id="s-gh-branch" />
-          </div>
-          <div class="field">
-            <label>Admin Password</label>
-            <input type="password" id="s-admin-pw" placeholder="Leave blank to keep current" />
-            <span class="desc">Password required to access this admin dashboard.</span>
-          </div>
-          <button class="login-btn" style="max-width:200px" onclick="saveSettings()">Save settings</button>
-        </div>
-        <div class="card">
-          <div class="card-title">ℹ️ How publishing works</div>
-          <div class="info-box">
-            <p>When you click <strong>↑ Publish Changes</strong>, this admin writes to two files in your GitHub repository:</p>
-            <ul>
-              <li><code>content.json</code> — all editable text content</li>
-              <li><code>api/chat.js</code> — chat assistant configuration</li>
-            </ul>
-            <p style="margin-top:8px;">Vercel detects the GitHub commit and redeploys automatically. The live site updates within <strong>~30 seconds</strong>.</p>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /main -->
+    </div><!-- /main -->
+  </div><!-- /shell -->
 </div><!-- /app -->
 
-<div id="toast">✓ <span id="toast-msg">Saved</span></div>
-
+<div id="toast"><span id="toast-msg"></span></div>
 <script>
-/* ═══════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════ */
-var cfg = {};       // { token, repo, branch, pw }
-var content = {};   // content.json object
-var chatJS  = '';   // raw api/chat.js text
-var dirty   = false;
+var LS_CFG='pq_cfg3',LS_CR='pq_cr3';
+var cfg={},creds={},content={},chatJS='',cSHA='',jsSHA='';
+var DEFAULT_USER='admin',DEFAULT_PW='peques2025';
+var TEXT_KEYS=['hero.subtitle','hero.stat1_num','hero.stat1_label','hero.stat2_num','hero.stat2_label','hero.stat3_num','hero.stat3_label','pfb.name','pfb.desc','pfb.address','pfb.phone','ppg.name','ppg.desc','ppg.address','ppg.phone','t1.text','t1.initial','t1.name','t1.role','t2.text','t2.initial','t2.name','t2.role','t3.text','t3.initial','t3.name','t3.role','cta.title','cta.subtitle','cr.hero_lead','cr.v1_title','cr.v1_text','cr.v2_title','cr.v2_text','cr.v3_title','cr.v3_text','cr.r1_title','cr.r1_desc','cr.r2_title','cr.r2_desc','cr.r3_title','cr.r3_desc','chat.welcome'];
 
-/* ═══════════════════════════════════════════
-   AUTH
-═══════════════════════════════════════════ */
-var ADMIN_PW_KEY = 'pq_admin_pw';
-var DEFAULT_PW   = 'peques2025';
+function dg(o,p){return p.split('.').reduce(function(a,k){return a!=null?a[k]:undefined;},o);}
+function ds(o,p,v){var a=p.split('.');var c=o;for(var i=0;i<a.length-1;i++){if(c[a[i]]==null)c[a[i]]={};c=c[a[i]];}c[a[a.length-1]]=v;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function $(id){return document.getElementById(id);}
 
-function doLogin() {
-  var pw     = document.getElementById('admin-pw').value.trim();
-  var token  = document.getElementById('gh-token').value.trim();
-  var repo   = document.getElementById('gh-repo').value.trim();
-  var branch = document.getElementById('gh-branch').value.trim() || 'main';
-  var storedPw = localStorage.getItem(ADMIN_PW_KEY) || DEFAULT_PW;
-  var err = document.getElementById('login-err');
+/* Password toggle */
+function togglePw(id,btn){var el=$(id);var s=el.type==='text';el.type=s?'password':'text';btn.textContent=s?'👁':'🙈';}
 
-  if (pw !== storedPw) {
-    err.textContent = 'Incorrect password.'; err.style.display = 'block'; return;
-  }
-  if (!token || !repo) {
-    err.textContent = 'Please fill in all fields.'; err.style.display = 'block'; return;
-  }
+/* Toast */
+function toast(msg,type){var t=$('toast');$('toast-msg').textContent=msg;t.className='show '+(type||'');clearTimeout(t._t);t._t=setTimeout(function(){t.className='';},4500);}
 
-  cfg = { token: token, repo: repo, branch: branch };
-  localStorage.setItem('pq_cfg', JSON.stringify(cfg));
-  err.style.display = 'none';
+/* Status bar */
+function setStatus(msg,cls){var el=$('top-status');el.textContent=msg;el.className='status-pill '+(cls||'ready');}
+
+/* Nav */
+function nav(btn){
+  document.querySelectorAll('.nav-item').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  btn.classList.add('active');
+  $('panel-'+btn.dataset.panel).classList.add('active');
+}
+
+/* ── AUTH ── */
+function doLogin(){
+  var user=$('l-user').value.trim()||'admin';
+  var pw=$('l-pw').value;
+  var stored=JSON.parse(localStorage.getItem(LS_CR)||'null')||{user:DEFAULT_USER,pw:DEFAULT_PW};
+  var err=$('l-err');
+  if(user!==stored.user||pw!==stored.pw){err.textContent='Incorrect username or password.';return;}
+  err.textContent='';creds=stored;
+  var sc=JSON.parse(localStorage.getItem(LS_CFG)||'null');if(sc)cfg=sc;
   startApp();
 }
+function doLogout(){$('login-screen').style.display='flex';$('app').classList.remove('show');$('l-pw').value='';}
 
-function doLogout() {
-  cfg = {}; content = {}; chatJS = '';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').classList.remove('show');
+/* ── START ── */
+function startApp(){
+  $('login-screen').style.display='none';$('app').classList.add('show');
+  populateSettingForms();
+  if(cfg.token&&cfg.repo){
+    setStatus('Loading…','saving');
+    Promise.all([loadJSON(),loadChatJS()])
+      .then(function(){populateForms();setStatus('Ready','ready');})
+      .catch(function(e){setStatus('Error','error');toast('Error: '+e.message,'err');});
+  } else {
+    setStatus('GitHub not configured','error');
+    var btn=document.querySelector('[data-panel="api"]');if(btn)nav(btn);
+    toast('Configure GitHub connection first','err');
+  }
 }
 
-function saveSettings() {
-  var token  = document.getElementById('s-gh-token').value.trim();
-  var repo   = document.getElementById('s-gh-repo').value.trim();
-  var branch = document.getElementById('s-gh-branch').value.trim() || 'main';
-  var pw     = document.getElementById('s-admin-pw').value.trim();
-  if (token)  cfg.token  = token;
-  if (repo)   cfg.repo   = repo;
-  if (branch) cfg.branch = branch;
-  if (pw)     localStorage.setItem(ADMIN_PW_KEY, pw);
-  localStorage.setItem('pq_cfg', JSON.stringify(cfg));
-  showToast('Settings saved', 'success');
+/* ── GITHUB ── */
+function ghG(path){
+  return fetch('https://api.github.com/repos/'+cfg.repo+'/contents/'+path+'?ref='+cfg.branch,{
+    headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}
+  }).then(function(r){if(!r.ok)throw new Error('GitHub '+r.status+' – '+path);return r.json();});
+}
+function ghP(path,text,sha){
+  var b64=btoa(unescape(encodeURIComponent(text)));
+  var body={message:'Admin: update '+path,content:b64,branch:cfg.branch};
+  if(sha)body.sha=sha;
+  return fetch('https://api.github.com/repos/'+cfg.repo+'/contents/'+path,{
+    method:'PUT',
+    headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  }).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.message||r.status);return d;});});
+}
+function dec64(b64){return decodeURIComponent(escape(atob(b64.replace(/\s/g,''))));}
+
+function loadJSON(){
+  return ghG('content.json').then(function(d){cSHA=d.sha;content=JSON.parse(dec64(d.content));});
+}
+function loadChatJS(){
+  return ghG('api/chat.js').then(function(d){jsSHA=d.sha;chatJS=dec64(d.content);});
 }
 
-/* ═══════════════════════════════════════════
-   APP INIT
-═══════════════════════════════════════════ */
-function startApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('show');
-  // Populate settings panel
-  document.getElementById('s-gh-token').value  = cfg.token  || '';
-  document.getElementById('s-gh-repo').value   = cfg.repo   || '';
-  document.getElementById('s-gh-branch').value = cfg.branch || 'main';
-  setStatus('Loading…', false);
-  Promise.all([loadContentJSON(), loadChatJS()])
-    .then(function() {
-      populateForms();
-      setStatus('Loaded — ready', true);
-    })
-    .catch(function(e) {
-      setStatus('Load error: ' + e.message, false);
-      showToast('Error: ' + e.message, 'error');
+/* ── POPULATE ── */
+function populateForms(){
+  TEXT_KEYS.forEach(function(k){var el=$(k);if(el){var v=dg(content,k);if(v!=null)el.value=v;}});
+  var m=$('chat.openai_model');if(m&&content.chat&&content.chat.openai_model)m.value=content.chat.openai_model;
+  renderQRs((content.chat&&content.chat.quick_replies)||[]);
+  $('chat.system_prompt').value=extractPrompt(chatJS);
+  // OpenAI key from chat.js
+  var km=chatJS.match(/Bearer\s+([^\s`'"\\]+)/);if(km&&km[1]&&km[1]!=='${process')$('openai-key').value=km[1];
+  // Images
+  if(content.images){
+    [['logo','prev-logo','clr-logo'],['pfb_photo','prev-pfb','clr-pfb'],['ppg_photo','prev-ppg','clr-ppg']].forEach(function(a){
+      var src=content.images[a[0]];if(src){var img=$(a[1]);var btn=$(a[2]);if(img){img.src=src;img.classList.add('show');}if(btn)btn.classList.add('show');}
     });
-}
-
-/* ═══════════════════════════════════════════
-   GITHUB API
-═══════════════════════════════════════════ */
-function ghFetch(path, opts) {
-  return fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, Object.assign({
-    headers: {
-      'Authorization': 'token ' + cfg.token,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    }
-  }, opts));
-}
-
-function getFile(path) {
-  return ghFetch(path + '?ref=' + cfg.branch)
-    .then(function(r) {
-      if (!r.ok) throw new Error('Could not fetch ' + path + ' (' + r.status + ')');
-      return r.json();
-    });
-}
-
-function putFile(path, contentStr, sha) {
-  var b64 = btoa(unescape(encodeURIComponent(contentStr)));
-  var body = { message: 'Admin: update ' + path, content: b64, branch: cfg.branch };
-  if (sha) body.sha = sha;
-  return ghFetch(path, {
-    method: 'PUT',
-    body: JSON.stringify(body)
-  }).then(function(r) {
-    if (!r.ok) return r.json().then(function(d) { throw new Error(d.message || r.status); });
-    return r.json();
-  });
-}
-
-/* ═══════════════════════════════════════════
-   LOAD FILES
-═══════════════════════════════════════════ */
-var contentSHA = '';
-var chatJSSHA  = '';
-
-function loadContentJSON() {
-  return getFile('content.json').then(function(data) {
-    contentSHA = data.sha;
-    var raw = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-    content = JSON.parse(raw);
-  });
-}
-
-function loadChatJS() {
-  return getFile('api/chat.js').then(function(data) {
-    chatJSSHA = data.sha;
-    chatJS = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
-  });
-}
-
-/* ═══════════════════════════════════════════
-   POPULATE FORMS
-═══════════════════════════════════════════ */
-var FLAT_KEYS = [
-  'hero.subtitle','hero.stat1_num','hero.stat1_label',
-  'hero.stat2_num','hero.stat2_label','hero.stat3_num','hero.stat3_label',
-  'pfb.name','pfb.desc','pfb.address','pfb.phone',
-  'ppg.name','ppg.desc','ppg.address','ppg.phone',
-  't1.text','t1.initial','t1.name','t1.role',
-  't2.text','t2.initial','t2.name','t2.role',
-  't3.text','t3.initial','t3.name','t3.role',
-  'cta.title','cta.subtitle',
-  'chat.welcome'
-];
-
-function deepGet(obj, path) {
-  return path.split('.').reduce(function(o,k){ return o!=null ? o[k] : undefined; }, obj);
-}
-function deepSet(obj, path, val) {
-  var parts = path.split('.');
-  var o = obj;
-  for (var i = 0; i < parts.length - 1; i++) {
-    if (o[parts[i]] == null) o[parts[i]] = {};
-    o = o[parts[i]];
   }
-  o[parts[parts.length-1]] = val;
+}
+function populateSettingForms(){
+  $('s-user').value=creds.user||DEFAULT_USER;
+  $('s-token').value=cfg.token||'';$('s-repo').value=cfg.repo||'';$('s-branch').value=cfg.branch||'main';
 }
 
-function populateForms() {
-  FLAT_KEYS.forEach(function(key) {
-    var el = document.getElementById(key);
-    if (el) { var v = deepGet(content, key); if (v != null) el.value = v; }
-  });
-
-  // Chat model
-  var modelEl = document.getElementById('chat.openai_model');
-  if (modelEl && content.chat && content.chat.openai_model) {
-    modelEl.value = content.chat.openai_model;
-  }
-
-  // Quick replies
-  var qrs = (content.chat && content.chat.quick_replies) || [];
-  renderQRs(qrs);
-
-  // System prompt — extract from chat.js
-  var sp = extractSystemPrompt(chatJS);
-  document.getElementById('chat.system_prompt').value = sp;
+/* ── IMAGES ── */
+function handleImg(key,input,prevId,clrId){
+  var file=input.files[0];if(!file)return;
+  if(file.size>700*1024){toast('Image too large — please keep under 500 KB','err');return;}
+  var r=new FileReader();
+  r.onload=function(e){
+    var src=e.target.result;
+    var ck=key==='logo'?'images.logo':key==='pfb'?'images.pfb_photo':'images.ppg_photo';
+    ds(content,ck,src);
+    var img=$(prevId);var btn=$(clrId);
+    img.src=src;img.classList.add('show');btn.classList.add('show');
+    toast('Image ready — click Publish to save','');
+  };
+  r.readAsDataURL(file);
 }
+function clearImg(ck,prevId,clrId){ds(content,ck,'');$(prevId).classList.remove('show');$(clrId).classList.remove('show');}
 
-/* ═══════════════════════════════════════════
-   QUICK REPLIES
-═══════════════════════════════════════════ */
-function renderQRs(qrs) {
-  var list = document.getElementById('qr-list');
-  list.innerHTML = '';
-  qrs.forEach(function(qr, i) {
-    var div = document.createElement('div');
-    div.className = 'qr-item';
-    div.innerHTML = '<input type="text" placeholder="Button label" value="' + esc(qr.label||'') + '" data-qr-label="'+i+'" />' +
-      '<input type="text" placeholder="Message sent to AI" value="' + esc(qr.message||'') + '" data-qr-msg="'+i+'" />' +
-      '<button class="qr-remove" onclick="removeQR('+i+')">✕</button>';
-    list.appendChild(div);
+/* ── QUICK REPLIES ── */
+function renderQRs(list){
+  var g=$('qr-grid');g.innerHTML='';
+  list.forEach(function(qr,i){
+    var row=document.createElement('div');row.className='qr-row';
+    row.innerHTML='<input type="text" placeholder="Button label" value="'+esc(qr.label)+'" data-ql="'+i+'" /><input type="text" placeholder="Message sent to AI" value="'+esc(qr.message)+'" data-qm="'+i+'" /><button class="qr-del" onclick="removeQR('+i+')">✕</button>';
+    g.appendChild(row);
   });
 }
+function getQRs(){var l=document.querySelectorAll('[data-ql]'),m=document.querySelectorAll('[data-qm]'),o=[];for(var i=0;i<l.length;i++)o.push({label:l[i].value,message:m[i].value});return o;}
+function addQR(){var c=getQRs();c.push({label:'',message:''});renderQRs(c);}
+function removeQR(i){var c=getQRs();c.splice(i,1);renderQRs(c);}
 
-function getQRs() {
-  var labels = document.querySelectorAll('[data-qr-label]');
-  var msgs   = document.querySelectorAll('[data-qr-msg]');
-  var out = [];
-  for (var i = 0; i < labels.length; i++) {
-    out.push({ label: labels[i].value, message: msgs[i].value });
-  }
-  return out;
+/* ── CHAT.JS HELPERS ── */
+function extractPrompt(js){var m=js.match(/const SYSTEM_PROMPT\s*=\s*`([\s\S]*?)`\s*;/);return m?m[1]:'';}
+function injectPrompt(js,p){return js.replace(/(const SYSTEM_PROMPT\s*=\s*`)([\s\S]*?)(`\s*;)/,function(_,a,_b,c){return a+p+c;});}
+function injectModel(js,m){return js.replace(/(model:\s*['"])[^'"]+(['"])/,function(_,a,b){return a+m+b;});}
+function injectKey(js,key){
+  // Replace 'Bearer <key>' pattern
+  js=js.replace(/(Authorization.*?[Bb]earer\s+)([^\s'"\\`]+)/g,function(_,p){return p+key;});
+  // Also replace direct string if present
+  js=js.replace(/(process\.env\.OPENAI_API_KEY\s*\|\|\s*['"])([^'"]*)(["'])/g,function(_,a,_b,c){return a+key+c;});
+  return js;
 }
 
-function addQR() {
-  var current = getQRs();
-  current.push({ label: '', message: '' });
-  renderQRs(current);
+/* ── OPENAI TEST ── */
+function testOpenAI(){
+  var key=$('openai-key').value.trim();
+  var box=$('api-status-box');
+  if(!key){box.innerHTML='<div class="api-pill err">⚠ Enter a key first</div>';return;}
+  box.innerHTML='<div class="api-pill wait">⏳ Testing connection…</div>';
+  fetch('https://api.openai.com/v1/models',{headers:{'Authorization':'Bearer '+key}})
+    .then(function(r){
+      box.innerHTML=r.ok
+        ?'<div class="api-pill ok">✓ Connected — API key is valid</div>'
+        :'<div class="api-pill err">✕ Invalid key or quota exceeded ('+r.status+')</div>';
+    }).catch(function(){box.innerHTML='<div class="api-pill err">✕ Network error</div>';});
 }
 
-function removeQR(idx) {
-  var current = getQRs();
-  current.splice(idx, 1);
-  renderQRs(current);
+/* ── PUBLISH ── */
+function publishAll(){
+  if(!cfg.token||!cfg.repo){toast('Configure GitHub in API & Connection first','err');return;}
+  var btn=$('btn-publish');btn.disabled=true;btn.textContent='Publishing…';setStatus('Saving…','saving');
+  TEXT_KEYS.forEach(function(k){var el=$(k);if(el)ds(content,k,el.value);});
+  if(!content.chat)content.chat={};
+  content.chat.quick_replies=getQRs();
+  content.chat.openai_model=$('chat.openai_model').value;
+  content.updated=new Date().toISOString();
+  var nJS=chatJS;
+  var np=$('chat.system_prompt').value;if(np)nJS=injectPrompt(nJS,np);
+  var nm=$('chat.openai_model').value;if(nm)nJS=injectModel(nJS,nm);
+  var nk=$('openai-key').value.trim();if(nk)nJS=injectKey(nJS,nk);
+  var done=function(){btn.disabled=false;btn.textContent='↑ Publish to site';};
+  ghP('content.json',JSON.stringify(content,null,2),cSHA)
+    .then(function(res){cSHA=res.content.sha;return ghP('api/chat.js',nJS,jsSHA);})
+    .then(function(res){jsSHA=res.content.sha;chatJS=nJS;done();setStatus('Published ✓ · live in ~30s','ready');toast('✓ Published — site updating','');})
+    .catch(function(e){done();setStatus('Error','error');toast('Error: '+e.message,'err');});
 }
 
-function esc(s) { return s.replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-/* ═══════════════════════════════════════════
-   CHAT.JS PARSING
-═══════════════════════════════════════════ */
-function extractSystemPrompt(js) {
-  var m = js.match(/const SYSTEM_PROMPT\s*=\s*`([\s\S]*?)`\s*;/);
-  return m ? m[1] : '';
+/* ── SAVE SETTINGS ── */
+function saveCreds(){
+  var user=$('s-user').value.trim()||creds.user;
+  var pw=$('s-pw').value;
+  creds.user=user;if(pw)creds.pw=pw;
+  localStorage.setItem(LS_CR,JSON.stringify(creds));
+  $('s-pw').value='';toast('Credentials saved','');
+}
+function saveGH(){
+  var t=$('s-token').value.trim();var r=$('s-repo').value.trim();var b=$('s-branch').value.trim()||'main';
+  if(t)cfg.token=t;if(r)cfg.repo=r;if(b)cfg.branch=b;
+  localStorage.setItem(LS_CFG,JSON.stringify(cfg));
+  if(cfg.token&&cfg.repo){
+    setStatus('Connecting…','saving');
+    Promise.all([loadJSON(),loadChatJS()])
+      .then(function(){populateForms();setStatus('Ready','ready');toast('Connected to GitHub ✓','');})
+      .catch(function(e){setStatus('Error','error');toast('Error: '+e.message,'err');});
+  } else {toast('Settings saved','');}
 }
 
-function injectSystemPrompt(js, newPrompt) {
-  return js.replace(
-    /(const SYSTEM_PROMPT\s*=\s*`)([\s\S]*?)(`\s*;)/,
-    function(_, open, _old, close) { return open + newPrompt + close; }
-  );
-}
-
-function injectModel(js, model) {
-  return js.replace(
-    /(model:\s*['"])[^'"]+(['"])/,
-    function(_, open, close) { return open + model + close; }
-  );
-}
-
-function injectWelcome(js, msg) {
-  return js.replace(
-    /(const GREETING\s*=\s*')([\s\S]*?)('\s*;)/,
-    function(_, open, _old, close) { return open + msg.replace(/'/g,"\\'") + close; }
-  );
-}
-
-/* ═══════════════════════════════════════════
-   PUBLISH
-═══════════════════════════════════════════ */
-function publishAll() {
-  var btn = document.getElementById('publish-btn');
-  btn.disabled = true; btn.textContent = 'Publishing…';
-  setStatus('Saving…', false);
-
-  // Collect form values into content object
-  FLAT_KEYS.forEach(function(key) {
-    var el = document.getElementById(key);
-    if (el) deepSet(content, key, el.value);
-  });
-
-  // Quick replies
-  if (!content.chat) content.chat = {};
-  content.chat.quick_replies = getQRs();
-  content.chat.openai_model = document.getElementById('chat.openai_model').value;
-  content.updated = new Date().toISOString();
-
-  // Update chat.js
-  var newPrompt = document.getElementById('chat.system_prompt').value;
-  var newModel  = document.getElementById('chat.openai_model').value;
-  var newWelcome = document.getElementById('chat.welcome').value;
-  var newChatJS = chatJS;
-  newChatJS = injectSystemPrompt(newChatJS, newPrompt);
-  newChatJS = injectModel(newChatJS, newModel);
-  newChatJS = injectWelcome(newChatJS, newWelcome);
-
-  var contentStr = JSON.stringify(content, null, 2);
-
-  // Commit content.json then api/chat.js
-  putFile('content.json', contentStr, contentSHA)
-    .then(function(res) {
-      contentSHA = res.content.sha;
-      return putFile('api/chat.js', newChatJS, chatJSSHA);
-    })
-    .then(function(res) {
-      chatJSSHA = res.content.sha;
-      chatJS = newChatJS;
-      btn.disabled = false; btn.textContent = '↑ Publish Changes';
-      setStatus('Published ✓ — live in ~30s', true);
-      showToast('Published! Site updating…', 'success');
-    })
-    .catch(function(e) {
-      btn.disabled = false; btn.textContent = '↑ Publish Changes';
-      setStatus('Error: ' + e.message, false);
-      showToast('Error: ' + e.message, 'error');
-    });
-}
-
-/* ═══════════════════════════════════════════
-   UI HELPERS
-═══════════════════════════════════════════ */
-function showPanel(id) {
-  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('panel-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
-}
-
-function setStatus(msg, ok) {
-  var el = document.getElementById('status-label');
-  el.textContent = msg;
-  el.className = 'topbar-status' + (ok ? ' ok' : '');
-}
-
-var toastTimer;
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.className = 'show ' + (type || '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { t.className = ''; }, 4000);
-}
-
-/* ═══════════════════════════════════════════
-   BOOT
-═══════════════════════════════════════════ */
-(function init() {
-  var saved = localStorage.getItem('pq_cfg');
-  if (saved) {
-    try { cfg = JSON.parse(saved); } catch(e) {}
-    if (cfg.token && cfg.repo) {
-      // Pre-fill login form and auto-proceed if remembered
-      document.getElementById('gh-token').value  = cfg.token;
-      document.getElementById('gh-repo').value   = cfg.repo;
-      document.getElementById('gh-branch').value = cfg.branch || 'main';
-    }
-  }
+/* ── BOOT ── */
+(function(){
+  var sc=JSON.parse(localStorage.getItem(LS_CFG)||'null');if(sc)cfg=sc;
+  var scr=JSON.parse(localStorage.getItem(LS_CR)||'null');if(scr)creds=scr;
+  if(creds.user)$('l-user').value=creds.user;
 })();
 </script>
-
 </body>
 </html>

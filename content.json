@@ -46,5 +46,25 @@
   },
   "chat": {
     "welcome": "Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I'm here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?"
+  },
+  "cr": {
+    "hero_lead": "Peques Anglo-Spanish Nursery Schools has been a home for exceptional early years professionals since 1999. We are a trilingual, warmly led and child-centred community — and the people who work here make it everything it is.",
+    "v1_title": "Trilingual environment",
+    "v1_text": "Work alongside colleagues and children across English, Spanish and Mandarin. A truly international professional experience in the heart of Fulham.",
+    "v2_title": "Continuous development",
+    "v2_text": "Regular CPD, in-house training, and a leadership team committed to nurturing your professional growth at every stage of your career.",
+    "v3_title": "Warmth & community",
+    "v3_text": "We hold the London Healthy Workplace Charter because we believe the wellbeing of our team and the quality of childcare are inseparably connected.",
+    "r1_title": "Unqualified Early Years Assistant",
+    "r1_desc": "A wonderful starting point for anyone who has a genuine passion for working with young children and would like to build a career in early years. No formal qualification is required — we value warmth, reliability and a love of learning above all. Peques can support the right candidate towards a recognised qualification from day one.",
+    "r2_title": "Level 2 Early Years Practitioner",
+    "r2_desc": "Work alongside our experienced team to deliver warm, play-based learning within the EYFS framework. A Level 2 Early Years qualification (e.g. CACHE, NCFE or NVQ Level 2) is required. Those actively working towards Level 3 are very welcome — we actively support continued professional development within the role.",
+    "r3_title": "Level 3 & Above Early Years Educator",
+    "r3_desc": "We welcome applications from qualified Early Years Educators at Level 3 and above — including CACHE Level 3, BTEC, Foundation Degree (FdA), BA Hons Early Childhood, PGCE, EYTS or EYITT. Depending on your level and experience, roles may include key person responsibilities, room leadership, curriculum planning and mentoring of junior colleagues. Please indicate your qualification level and preferred focus in your personal statement."
+  },
+  "images": {
+    "logo": "",
+    "pfb_photo": "",
+    "ppg_photo": ""
   }
 }
