@@ -376,19 +376,19 @@
         </div>
         <div class="card">
           <div class="card-hd">🐙 GitHub — Publish Connection</div>
-          <div class="info"><p>Changes are committed to GitHub; Vercel redeploys automatically in ~30 seconds.</p></div>
-          <div class="f">
-            <label>Personal Access Token</label>
-            <div class="pw-row">
-              <input type="password" id="s-token" placeholder="ghp_…" autocomplete="off" />
-              <button class="eye" type="button" onclick="togglePw('s-token',this)">👁</button>
+          <div class="info"><p>Paste your GitHub Personal Access Token below. This is the only thing you need to enter — repository and branch are pre-configured. Once saved, you will not need to enter it again.</p></div>
+          <div class="api-row">
+            <div class="f">
+              <label>GitHub Personal Access Token</label>
+              <div class="pw-row">
+                <input type="password" id="s-token" placeholder="ghp_…" autocomplete="off" />
+                <button class="eye" type="button" onclick="togglePw('s-token',this)">👁</button>
+              </div>
+              <small>Create a token with <strong>repo</strong> scope and <strong>No expiration</strong> at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new →</a></small>
             </div>
-            <small>Needs <strong>Contents → Read &amp; Write</strong> scope. <a href="https://github.com/settings/tokens/new" target="_blank">Create one →</a></small>
+            <button class="test-btn" onclick="testGHToken()">Test token</button>
           </div>
-          <div class="g2">
-            <div class="f"><label>Repository (owner/repo)</label><input type="text" id="s-repo" placeholder="Margarita4168/peques-landing" /></div>
-            <div class="f"><label>Branch</label><input type="text" id="s-branch" value="main" /></div>
-          </div>
+          <div id="gh-status-box"></div>
           <div class="save-row"><button class="save-btn" onclick="saveGH()">Save &amp; connect</button></div>
         </div>
       </div>
@@ -447,6 +447,9 @@
 <div id="toast"><span id="toast-msg"></span></div>
 <script>
 var LS_CFG='pq_cfg3',LS_CR='pq_cr3';
+// ── PRE-CONFIGURED — change only if you move to a different repo ──
+var GITHUB_REPO   = 'Margarita4168/peques-landing';
+var GITHUB_BRANCH = 'main';
 var cfg={},creds={},content={},chatJS='',cSHA='',jsSHA='';
 var DEFAULT_USER='admin',DEFAULT_PW='peques2025';
 var TEXT_KEYS=['hero.subtitle','hero.stat1_num','hero.stat1_label','hero.stat2_num','hero.stat2_label','hero.stat3_num','hero.stat3_label','pfb.name','pfb.desc','pfb.address','pfb.phone','ppg.name','ppg.desc','ppg.address','ppg.phone','t1.text','t1.initial','t1.name','t1.role','t2.text','t2.initial','t2.name','t2.role','t3.text','t3.initial','t3.name','t3.role','cta.title','cta.subtitle','cr.hero_lead','cr.v1_title','cr.v1_text','cr.v2_title','cr.v2_text','cr.v3_title','cr.v3_text','cr.r1_title','cr.r1_desc','cr.r2_title','cr.r2_desc','cr.r3_title','cr.r3_desc','chat.welcome'];
@@ -482,6 +485,9 @@ function doLogin(){
   if(user!==stored.user||pw!==stored.pw){err.textContent='Incorrect username or password.';return;}
   err.textContent='';creds=stored;
   var sc=JSON.parse(localStorage.getItem(LS_CFG)||'null');if(sc)cfg=sc;
+  // Always use hardcoded repo/branch — only token comes from storage
+  cfg.repo   = GITHUB_REPO;
+  cfg.branch = GITHUB_BRANCH;
   startApp();
 }
 function doLogout(){$('login-screen').style.display='flex';$('app').classList.remove('show');$('l-pw').value='';}
@@ -490,15 +496,24 @@ function doLogout(){$('login-screen').style.display='flex';$('app').classList.re
 function startApp(){
   $('login-screen').style.display='none';$('app').classList.add('show');
   populateSettingForms();
-  if(cfg.token&&cfg.repo){
+  if(cfg.token){
     setStatus('Loading…','saving');
     Promise.all([loadJSON(),loadChatJS()])
       .then(function(){populateForms();setStatus('Ready','ready');updateConnBanner();})
-      .catch(function(e){setStatus('Error','error');toast('Error: '+e.message,'err');});
+      .catch(function(e){
+        setStatus('Token invalid or expired','error');
+        // Navigate to API settings so user can update token
+        var btn=document.querySelector('[data-panel="api"]');if(btn)nav(btn);
+        $('gh-status-box').innerHTML='<div class="api-pill err">✕ '+e.message+' — please enter a new GitHub token below and click Save &amp; connect</div>';
+        toast('GitHub token invalid — please update it in API & Connection','err');
+      });
   } else {
-    setStatus('GitHub not configured','error');
+    setStatus('Enter your GitHub token to begin','saving');
     var btn=document.querySelector('[data-panel="api"]');if(btn)nav(btn);
-    toast('Configure GitHub connection first','err');
+    // Show a friendly first-time setup message
+    if($('gh-status-box')){
+      $('gh-status-box').innerHTML='<div class="api-pill wait">👋 First time? Enter your GitHub token above and click Save & connect to get started.</div>';
+    }
   }
 }
 
@@ -559,7 +574,7 @@ function populateForms(){
 }
 function populateSettingForms(){
   $('s-user').value=creds.user||DEFAULT_USER;
-  $('s-token').value=cfg.token||'';$('s-repo').value=cfg.repo||'';$('s-branch').value=cfg.branch||'main';
+  if($('s-token'))$('s-token').value=cfg.token||'';
 }
 
 /* ── IMAGES ── */
@@ -724,15 +739,41 @@ function saveCreds(){
   $('s-pw').value='';toast('Credentials saved','');
 }
 function saveGH(){
-  var t=$('s-token').value.trim();var r=$('s-repo').value.trim();var b=$('s-branch').value.trim()||'main';
-  if(t)cfg.token=t;if(r)cfg.repo=r;if(b)cfg.branch=b;
+  var t=$('s-token').value.trim();
+  if(!t){toast('Please enter a GitHub token','err');return;}
+  cfg.token  = t;
+  cfg.repo   = GITHUB_REPO;
+  cfg.branch = GITHUB_BRANCH;
   localStorage.setItem(LS_CFG,JSON.stringify(cfg));
-  if(cfg.token&&cfg.repo){
-    setStatus('Connecting…','saving');
-    Promise.all([loadJSON(),loadChatJS()])
-      .then(function(){populateForms();setStatus('Ready','ready');toast('Connected to GitHub ✓','');})
-      .catch(function(e){setStatus('Error','error');toast('Error: '+e.message,'err');});
-  } else {toast('Settings saved','');}
+  setStatus('Connecting…','saving');
+  Promise.all([loadJSON(),loadChatJS()])
+    .then(function(){
+      populateForms();
+      setStatus('Ready','ready');
+      toast('Connected to GitHub ✓ — you are all set!','');
+      $('gh-status-box').innerHTML='<div class="api-pill ok">✓ Connected — GitHub token is valid</div>';
+    })
+    .catch(function(e){
+      setStatus('Error','error');
+      $('gh-status-box').innerHTML='<div class="api-pill err">✕ '+e.message+'</div>';
+      toast('Error: '+e.message,'err');
+    });
+}
+
+function testGHToken(){
+  var t=$('s-token').value.trim();
+  var box=$('gh-status-box');
+  if(!t){box.innerHTML='<div class="api-pill err">⚠ Enter your token first</div>';return;}
+  box.innerHTML='<div class="api-pill wait">⏳ Testing…</div>';
+  fetch('https://api.github.com/repos/'+GITHUB_REPO,{
+    headers:{'Authorization':'token '+t,'Accept':'application/vnd.github.v3+json'}
+  }).then(function(r){
+    if(r.ok){
+      box.innerHTML='<div class="api-pill ok">✓ Token valid — connected to '+GITHUB_REPO+'</div>';
+    } else {
+      box.innerHTML='<div class="api-pill err">✕ Invalid token or no access ('+r.status+') — create a new token with repo scope</div>';
+    }
+  }).catch(function(){box.innerHTML='<div class="api-pill err">✕ Network error</div>';});
 }
 
 /* ── BOOT ── */
