@@ -319,54 +319,59 @@
       <!-- API & CONNECTION -->
       <div class="panel" id="panel-api">
         <div class="panel-hd"><h2>API &amp; <em>Connection</em></h2><p>Configure the AI chat assistant and your GitHub publish connection.</p></div>
+        <!-- CONNECTION STATUS BANNER -->
+        <div id="conn-banner" class="info" style="margin-bottom:18px;display:none;">
+          <p id="conn-banner-text"></p>
+        </div>
+
         <div class="card">
-          <div class="card-hd">🤖 OpenAI — API Key</div>
-          <div class="info"><p>Your API key is written securely into <code>api/chat.js</code> on publish — never visible to visitors.</p></div>
+          <div class="card-hd">🔑 OpenAI API Key</div>
+          <div class="info tip"><p>Your API key is written into <code>api/chat.js</code> when you publish. It never appears in any public file. Get yours at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></p></div>
           <div class="api-row">
             <div class="f">
-              <label>OpenAI API Key</label>
+              <label>API Key <span style="color:var(--red);font-weight:700;">*</span></label>
               <div class="pw-row">
-                <input type="password" id="openai-key" placeholder="sk-proj-…" autocomplete="off" />
+                <input type="password" id="openai-key" placeholder="sk-proj-…" autocomplete="off"
+                  oninput="updateConnBanner()" />
                 <button class="eye" type="button" onclick="togglePw('openai-key',this)">👁</button>
               </div>
-              <small>Get yours at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></small>
             </div>
-            <button class="test-btn" onclick="testOpenAI()">Test key</button>
+            <button class="test-btn" id="btn-test-key" onclick="testOpenAI()">Test key</button>
           </div>
           <div id="api-status-box"></div>
         </div>
 
-        <div class="card">
-          <div class="card-hd">🧠 OpenAI Assistant ID <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.7rem;color:var(--taupe-dk);">— recommended</span></div>
-          <div class="info">
-            <p>Connect your own <strong>custom Assistant</strong> built in the OpenAI platform. The assistant keeps its own knowledge, files, and instructions — no system prompt needed here.</p>
-            <p>When an Assistant ID is set, every visitor message is sent to your Assistant via a dedicated <strong>thread</strong>. Conversation history is preserved within each session automatically.</p>
+        <div class="card" style="border:2px solid var(--sage);border-radius:var(--rad-lg);">
+          <div class="card-hd" style="color:var(--sage-dk);">🧠 OpenAI Assistant ID <span style="font-weight:400;font-size:0.7rem;text-transform:none;letter-spacing:0;color:var(--sage);">— connect your custom Peques Assistant</span></div>
+          <div class="info" style="border-color:var(--sage-dk);">
+            <p>This connects the chat widget on your website directly to <strong>your custom OpenAI Assistant</strong>. Once set, every visitor conversation runs through your Assistant — including its knowledge, files and instructions.</p>
+            <p style="margin-top:8px;">Find your ID at <a href="https://platform.openai.com/assistants" target="_blank">platform.openai.com/assistants</a> — open your Assistant, copy the ID shown at the top (starts with <code>asst_</code>).</p>
           </div>
           <div class="api-row">
             <div class="f">
-              <label>Assistant ID</label>
-              <input type="text" id="openai-assistant-id" placeholder="asst_xxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" style="font-family:monospace;font-size:0.8rem;" />
-              <small>Find it at <a href="https://platform.openai.com/assistants" target="_blank">platform.openai.com/assistants</a> — click your assistant, copy the ID</small>
+              <label>Assistant ID <span style="color:var(--red);font-weight:700;">*</span></label>
+              <input type="text" id="openai-assistant-id"
+                placeholder="asst_xxxxxxxxxxxxxxxxxxxxxxxx"
+                autocomplete="off"
+                style="font-family:monospace;font-size:0.85rem;letter-spacing:0.02em;border-color:var(--sage);"
+                oninput="updateConnBanner()" />
+              <small>If left empty, the chat will use the system prompt in Chat Config instead.</small>
             </div>
-            <button class="test-btn" onclick="testAssistant()">Test assistant</button>
+            <button class="test-btn" onclick="testAssistant()">Verify assistant</button>
           </div>
           <div id="asst-status-box"></div>
-          <div class="info tip" style="margin-top:14px;">
-            <p><strong>How it works:</strong></p>
-            <ol>
-              <li>If an Assistant ID is set → chat uses your <strong>OpenAI Assistant</strong> (Assistants API)</li>
-              <li>If no Assistant ID → chat uses <strong>Chat Completions</strong> with the system prompt in Chat Config</li>
-            </ol>
-            <p>Both require a valid API key. The Assistant ID takes priority when both are set.</p>
-          </div>
-          <div class="f" style="margin-top:14px;">
-            <label>Model (Chat Completions fallback only)</label>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">⚙️ Model (fallback mode only)</div>
+          <div class="f">
+            <label>OpenAI Model</label>
             <select id="chat.openai_model">
               <option value="gpt-4o-mini">gpt-4o-mini — fast, affordable (recommended)</option>
               <option value="gpt-4o">gpt-4o — most capable</option>
               <option value="gpt-4-turbo">gpt-4-turbo</option>
             </select>
-            <small>Only used when no Assistant ID is configured.</small>
+            <small>Only used when no Assistant ID is set. Ignored when using your OpenAI Assistant.</small>
           </div>
         </div>
         <div class="card">
@@ -488,7 +493,7 @@ function startApp(){
   if(cfg.token&&cfg.repo){
     setStatus('Loading…','saving');
     Promise.all([loadJSON(),loadChatJS()])
-      .then(function(){populateForms();setStatus('Ready','ready');})
+      .then(function(){populateForms();setStatus('Ready','ready');updateConnBanner();})
       .catch(function(e){setStatus('Error','error');toast('Error: '+e.message,'err');});
   } else {
     setStatus('GitHub not configured','error');
@@ -528,11 +533,23 @@ function populateForms(){
   var m=$('chat.openai_model');if(m&&content.chat&&content.chat.openai_model)m.value=content.chat.openai_model;
   renderQRs((content.chat&&content.chat.quick_replies)||[]);
   $('chat.system_prompt').value=extractPrompt(chatJS);
-  // OpenAI key from chat.js
-  var km=chatJS.match(/Bearer\s+([^\s`'"\\]+)/);if(km&&km[1]&&!km[1].startsWith('${'))$('openai-key').value=km[1];
-  // Assistant ID from chat.js
-  var am=chatJS.match(/OPENAI_ASSISTANT_ID\s*\|\|\s*['"]([^'"]*)['"]/);
-  if(am&&am[1]&&am[1].startsWith('asst_'))$('openai-assistant-id').value=am[1];
+  // Extract API key from chat.js marker ##OPENAI_KEY##
+  var keyMatch = chatJS.match(/##OPENAI_KEY##/);
+  if (!keyMatch) {
+    // Try to extract existing injected key between the markers pattern
+    var km2 = chatJS.match(/OPENAI_API_KEY\s*\|\|\s*'([^'#][^']*)'/);
+    if (km2 && km2[1] && !km2[1].startsWith('##')) $('openai-key').value = km2[1];
+  } else {
+    $('openai-key').value = ''; // placeholder not replaced yet
+  }
+  // Extract Assistant ID from chat.js marker ##ASSISTANT_ID##
+  var aidMatch = chatJS.match(/##ASSISTANT_ID##/);
+  if (!aidMatch) {
+    var am2 = chatJS.match(/OPENAI_ASSISTANT_ID\s*\|\|\s*'([^'#][^']*)'/);
+    if (am2 && am2[1] && am2[1].startsWith('asst_')) $('openai-assistant-id').value = am2[1];
+  } else {
+    $('openai-assistant-id').value = ''; // placeholder not replaced yet
+  }
   // Images
   if(content.images){
     [['logo','prev-logo','clr-logo'],['pfb_photo','prev-pfb','clr-pfb'],['ppg_photo','prev-ppg','clr-ppg']].forEach(function(a){
@@ -579,18 +596,54 @@ function removeQR(i){var c=getQRs();c.splice(i,1);renderQRs(c);}
 function extractPrompt(js){var m=js.match(/const SYSTEM_PROMPT\s*=\s*`([\s\S]*?)`\s*;/);return m?m[1]:'';}
 function injectPrompt(js,p){return js.replace(/(const SYSTEM_PROMPT\s*=\s*`)([\s\S]*?)(`\s*;)/,function(_,a,_b,c){return a+p+c;});}
 function injectModel(js,m){return js.replace(/(model:\s*['"])[^'"]+(['"])/,function(_,a,b){return a+m+b;});}
-function injectKey(js,key){
-  if(!key)return js;
-  js=js.replace(/(Authorization.*?[Bb]earer\s+)([^\s'"\\`]+)/g,function(_,p){return p+key;});
-  js=js.replace(/(process\.env\.OPENAI_API_KEY\s*\|\|\s*['"])([^'"]*)(['"])/g,function(_,a,_b,cc){return a+key+cc;});
-  return js;
+function injectKey(js, key) {
+  if (!key) return js;
+  // Replace the ##OPENAI_KEY## placeholder (fresh file from GitHub)
+  if (js.indexOf('##OPENAI_KEY##') !== -1) {
+    return js.replace('##OPENAI_KEY##', key);
+  }
+  // Replace already-injected key (re-publishing with a new key)
+  return js.replace(
+    /(\/\/ ADMIN MANAGED[\s\S]*?OPENAI_API_KEY\s*=\s*process\.env\.OPENAI_API_KEY\s*\|\|\s*')[^']*(')/,
+    function(_, a, b) { return a + key + b; }
+  );
 }
 
-function injectAssistantId(js,aid){
-  if(!aid)return js;
-  js=js.replace(/(OPENAI_ASSISTANT_ID\s*=\s*process\.env\.OPENAI_ASSISTANT_ID\s*\|\|\s*['"])([^'"]*)(['"])/g,
-    function(_,a,_b,cc){return a+aid+cc;});
-  return js;
+function injectAssistantId(js, aid) {
+  if (!aid) return js;
+  // Replace the ##ASSISTANT_ID## placeholder (fresh file from GitHub)
+  if (js.indexOf('##ASSISTANT_ID##') !== -1) {
+    return js.replace('##ASSISTANT_ID##', aid);
+  }
+  // Replace already-injected assistant ID (re-publishing with a new one)
+  return js.replace(
+    /(\/\/ ADMIN MANAGED[\s\S]*?OPENAI_ASSISTANT_ID\s*=\s*process\.env\.OPENAI_ASSISTANT_ID\s*\|\|\s*')[^']*(')/,
+    function(_, a, b) { return a + aid + b; }
+  );
+}
+
+/* ── CONNECTION BANNER ── */
+function updateConnBanner() {
+  var banner = $('conn-banner');
+  var text   = $('conn-banner-text');
+  if (!banner || !text) return;
+  var key = ($('openai-key').value || '').trim();
+  var aid = ($('openai-assistant-id').value || '').trim();
+  if (!key) {
+    banner.className = 'info warn';
+    text.textContent = '⚠ Enter your OpenAI API key above and click Publish to activate the chat.';
+    banner.style.display = 'block';
+  } else if (aid && aid.startsWith('asst_')) {
+    banner.className = 'info';
+    text.textContent = '✓ Mode: OpenAI Assistant — chat will use your custom Assistant (' + aid.slice(0,16) + '…). Click Publish to apply.';
+    banner.style.display = 'block';
+  } else if (key) {
+    banner.className = 'info tip';
+    text.textContent = 'Mode: Chat Completions — chat will use the system prompt in Chat Config. Add an Assistant ID above to use your custom OpenAI Assistant.';
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
 }
 
 /* ── OPENAI TESTS ── */
@@ -645,8 +698,21 @@ function publishAll(){
   var done=function(){btn.disabled=false;btn.textContent='↑ Publish to site';};
   ghP('content.json',JSON.stringify(content,null,2),cSHA)
     .then(function(res){cSHA=res.content.sha;return ghP('api/chat.js',nJS,jsSHA);})
-    .then(function(res){jsSHA=res.content.sha;chatJS=nJS;done();setStatus('Published ✓ · live in ~30s','ready');toast('✓ Published — site updating','');})
-    .catch(function(e){done();setStatus('Error','error');toast('Error: '+e.message,'err');});
+    .then(function(res){
+      jsSHA=res.content.sha; chatJS=nJS; done();
+      // Show exactly what was saved
+      var key=$('openai-key').value.trim();
+      var aid=$('openai-assistant-id').value.trim();
+      var modeMsg = aid && aid.startsWith('asst_')
+        ? '✓ Published — Assistant ID saved, site live in ~30s'
+        : key
+          ? '✓ Published — API key saved, site live in ~30s'
+          : '✓ Published — site updating in ~30s';
+      setStatus('Published ✓ · live in ~30s','ready');
+      toast(modeMsg,'');
+      updateConnBanner();
+    })
+    .catch(function(e){done();setStatus('Error: '+e.message,'error');toast('✗ Error: '+e.message,'err');});
 }
 
 /* ── SAVE SETTINGS ── */
