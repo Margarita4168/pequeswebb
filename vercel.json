@@ -5,30 +5,45 @@
       "maxDuration": 30
     }
   },
-  "builds": [
-    { "src": "api/chat.js",        "use": "@vercel/node" },
-    { "src": "*.html",             "use": "@vercel/static" },
-    { "src": "*.json",             "use": "@vercel/static" },
-    { "src": "content-loader.js",  "use": "@vercel/static" }
-  ],
   "routes": [
-    { "src": "/api/chat",            "dest": "/api/chat.js" },
-    { "src": "/careers",             "dest": "/careers.html" },
-    { "src": "/careers.html",        "dest": "/careers.html" },
-    { "src": "/admin",               "dest": "/admin.html" },
-    { "src": "/admin.html",          "dest": "/admin.html" },
-    { "src": "/content.json",        "dest": "/content.json" },
-    { "src": "/content-loader.js",   "dest": "/content-loader.js" },
-    { "src": "/",                    "dest": "/index.html" }
-  ],
-  "headers": [
     {
-      "source": "/content.json",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store" }]
+      "src": "/api/chat",
+      "dest": "/api/chat.js"
     },
     {
-      "source": "/(.*)",
-      "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }]
+      "src": "/careers",
+      "dest": "/careers.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/content\\.json",
+      "dest": "/content.json",
+      "headers": {
+        "Cache-Control": "no-cache, no-store"
+      }
+    },
+    {
+      "src": "/content-loader\\.js",
+      "dest": "/content-loader.js"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*\\.js)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*\\.json)",
+      "dest": "/$1"
     }
   ]
 }
