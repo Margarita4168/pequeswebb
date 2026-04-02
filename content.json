@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2025-01-01T00:00:00Z",
+  "updated": "2026-04-02T11:03:39.757Z",
   "hero": {
     "subtitle": "Award-winning trilingual nursery schools in the heart of Fulham. English, Spanish & Mandarin — giving every child the very strongest foundation for a life well lived.",
     "stat1_num": "27",
@@ -45,7 +45,9 @@
     "subtitle": "We welcome visits warmly — it is the best way to see our settings, meet the team, and feel the Peques community for yourself. Contact Head Office directly to arrange yours."
   },
   "chat": {
-    "welcome": "Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I'm here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?"
+    "welcome": "Hello! Welcome to Peques Anglo-Spanish Nursery Schools. I'm here to help with any questions about our trilingual nurseries in Fulham. How can I assist you today?",
+    "quick_replies": [],
+    "openai_model": "gpt-4o-mini"
   },
   "cr": {
     "hero_lead": "Peques Anglo-Spanish Nursery Schools has been a home for exceptional early years professionals since 1999. We are a trilingual, warmly led and child-centred community — and the people who work here make it everything it is.",
