@@ -589,12 +589,19 @@
     .pq-msg.user .pq-msg-avatar { background: var(--taupe); color: var(--ink); }
     .pq-msg-bubble {
       max-width: 82%; padding: 10px 14px;
-      font-size: 0.83rem; line-height: 1.6; border-radius: 16px;
+      font-size: 0.87rem; line-height: 1.75; border-radius: 16px;
+      letter-spacing: 0.01em; word-spacing: 0.04em;
     }
     .pq-msg.bot  .pq-msg-bubble {
       background: #fff; color: var(--ink);
       border-radius: 4px 16px 16px 16px;
       box-shadow: var(--sh-sm);
+      font-weight: 400;
+    }
+    .pq-msg.bot .pq-msg-bubble a {
+      color: #7A9A5A; text-decoration: underline;
+      word-break: break-all; display: inline-block;
+      margin: 2px 0;
     }
     .pq-msg.user .pq-msg-bubble {
       background: var(--sage-dark); color: #fff;
@@ -1243,18 +1250,30 @@
   }
 
   function formatBotMessage(text) {
-    // Escape HTML
+    // Escape HTML special characters
     let out = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
-    // Make URLs clickable
+
+    // Ensure a space always exists before http (catches "texthttps://" mistakes)
+    out = out.replace(/([^\s])(https?:\/\/)/g, '$1 $2');
+
+    // Make https:// URLs clickable - only proper full URLs
     out = out.replace(
-      /(https?:\/\/[^\s\]\),]+)/g,
-      '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#7A9A5A;text-decoration:underline;word-break:break-all;">$1</a>'
+      /(https?:\/\/[^\s<>"'\]\),]+[^\s<>"'\]\),.!?])/g,
+      function(url) {
+        // Strip trailing punctuation that isn't part of the URL
+        const clean = url.replace(/[.,!?]+$/, '');
+        const trail = url.slice(clean.length);
+        return '<a href="' + clean + '" target="_blank" rel="noopener noreferrer">' + clean + '</a>' + trail;
+      }
     );
-    // Convert newlines to line breaks
+
+    // Convert newlines to line breaks with a small gap
+    out = out.replace(/\n\n/g, '<br><br>');
     out = out.replace(/\n/g, '<br>');
+
     return out;
   }
   function showTyping() {
