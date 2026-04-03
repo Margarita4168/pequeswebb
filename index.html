@@ -1132,21 +1132,21 @@
 
 <!-- Toggle button -->
 <button id="pq-chat-toggle" aria-label="Chat with us">
-  <span id="pq-chat-icon">&#127807;</span>
+  <span id="pq-chat-icon">🌱</span>
   <span class="pq-chat-pulse" id="pq-pulse"></span>
 </button>
 
 <!-- Chat window -->
-<div id="pq-chat-window" role="dialog" aria-label="Peques Assistant">
+<div id="pq-chat-window" role="dialog" aria-label="Elio - Peques Assistant">
 
   <!-- Header -->
   <div class="pq-chat-header">
-    <div class="pq-chat-avatar">&#127807;</div>
+    <div class="pq-chat-avatar">🌱</div>
     <div class="pq-chat-header-info">
-      <div class="pq-chat-header-name">Peques Assistant</div>
+      <div class="pq-chat-header-name">Elio 🌱</div>
       <div class="pq-chat-header-status">
         <span class="pq-status-dot"></span>
-        Online &middot; Nursery enquiries
+        Online &middot; Peques Anglo-Spanish Nursery Schools
       </div>
     </div>
     <button class="pq-chat-close" id="pq-chat-close" aria-label="Close chat">&#10005;</button>
@@ -1183,7 +1183,7 @@
 (function() {
   /* ── State ── */
   const ENDPOINT = '/api/chat';
-  const GREETING = 'Welcome to Peques Anglo-Spanish Nursery Schools 🌿 I\'m here to help. I can assist you in English, Spanish or Mandarin, please let me know your preference and I\'ll continue in your chosen language.';
+  const GREETING = 'Hi there! 🌱 I\'m Elio, and I\'m so happy you\'re here! I\'m part of the Peques family and I\'m here to help you with anything you need about our nurseries in Fulham. I can chat with you in English, Spanish or Mandarin, just let me know which you prefer and we\'ll get started!';
   let history   = [];    // kept for Chat Completions fallback
   let threadId  = null;  // OpenAI Assistants thread — created on first message
   let isOpen    = false;
@@ -1214,7 +1214,7 @@
     isOpen = false;
     chatWin.classList.remove('open');
     toggle.classList.remove('open');
-    icon.textContent = '🌿';
+    icon.textContent = '🌱';
     // Reset thread on close so next session starts fresh
     threadId = null;
     history  = [];
@@ -1236,7 +1236,7 @@
     wrap.className = `pq-msg ${role}`;
     const avatar = document.createElement('div');
     avatar.className = 'pq-msg-avatar';
-    avatar.textContent = role === 'bot' ? '🌿' : '\u{1F464}';
+    avatar.textContent = role === 'bot' ? '🌱' : '\u{1F464}';
     const bubble = document.createElement('div');
     bubble.className = 'pq-msg-bubble';
     if (role === 'bot') {
@@ -1283,7 +1283,7 @@
     wrap.id = 'pq-typing-indicator';
     const avatar = document.createElement('div');
     avatar.className = 'pq-msg-avatar';
-    avatar.textContent = '🌿';
+    avatar.textContent = '🌱';
     const dots = document.createElement('div');
     dots.className = 'pq-msg-bubble pq-typing';
     dots.innerHTML = '<span></span><span></span><span></span>';
