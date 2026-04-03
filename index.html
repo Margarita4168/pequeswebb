@@ -1229,13 +1229,33 @@
     wrap.className = `pq-msg ${role}`;
     const avatar = document.createElement('div');
     avatar.className = 'pq-msg-avatar';
-    avatar.textContent = role === 'bot' ? '🌿' : '👤';
+    avatar.textContent = role === 'bot' ? '🌿' : '\u{1F464}';
     const bubble = document.createElement('div');
     bubble.className = 'pq-msg-bubble';
-    bubble.textContent = text;
+    if (role === 'bot') {
+      bubble.innerHTML = formatBotMessage(text);
+    } else {
+      bubble.textContent = text;
+    }
     wrap.appendChild(avatar);
     wrap.appendChild(bubble);
     return wrap;
+  }
+
+  function formatBotMessage(text) {
+    // Escape HTML
+    let out = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    // Make URLs clickable
+    out = out.replace(
+      /(https?:\/\/[^\s\]\),]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:#7A9A5A;text-decoration:underline;word-break:break-all;">$1</a>'
+    );
+    // Convert newlines to line breaks
+    out = out.replace(/\n/g, '<br>');
+    return out;
   }
   function showTyping() {
     removeTyping();
